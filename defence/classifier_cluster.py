@@ -8,8 +8,11 @@ from transformers import (
     PreTrainedModel,
 )
 
+from typing import override
+from defence.abstract_defence import AbstractDefence
 
-class ClassifierCluster:
+
+class ClassifierCluster(AbstractDefence):
     def __init__(self):
         # fmt: off
         self.TOXICITY_MODEL_NAME: str = "textdetox/xlmr-large-toxicity-classifier-v2"
@@ -68,6 +71,7 @@ class ClassifierCluster:
             query,
             max_length=self.tox_mx_tokens,
             truncation=True,
+            padding = "max_length",
             return_overflowing_tokens=True,
             stride=50,
             return_tensors="pt",
@@ -92,5 +96,6 @@ class ClassifierCluster:
 
         return False
 
+    @override
     def is_safe(self, query: str) -> bool:
         return not (self._is_jailbreak(query) or self._is_toxic(query))

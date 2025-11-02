@@ -1,70 +1,121 @@
-import json, os
+import json
+import os
+from pathlib import Path
 from typing import Any, TextIO
+
+import hydra
+from omegaconf import DictConfig, OmegaConf
+
+from defence.abstract_defence import AbstractDefence
 from defence.classifier_cluster import ClassifierCluster
+from defence.heuristic_channel import HeuristicVectorAnalyzer
+from defence.linear_svm import JailbreakInferenceAPI
+from defence.shieldgemma import ShieldGemma2BClassifier
+from defence.train_classifier import JailbreakClassifier
 from dotenv import load_dotenv
 from metrics import AttackEvaluator, AttackResult, MetricsCalculator
-from defence.heuristic_channel import HeuristicVectorAnalyzer
-from defence.shieldgemma import ShieldGemma2BClassifier
 from query_agent import QueryAgent
 
-if __name__ == "__main__":
-    _ = load_dotenv()
-    huggingface_token: str | None = os.getenv("HUGGING_FACE_TOKEN")
 
-    query_agent: QueryAgent = QueryAgent("tinyllama")
-    cluster_guard: ClassifierCluster = ClassifierCluster()
-    heuristic_guard: HeuristicVectorAnalyzer = HeuristicVectorAnalyzer(3, 3)
-    llm_guard: ShieldGemma2BClassifier = ShieldGemma2BClassifier(huggingface_token)
+def calculate_and_write_metrics(
+    data: list[dict[str, Any]],
+    guard: AbstractDefence,
+    guard_label: str,
+    output_file: TextIO,
+):
+    tp, fn, fp, tn = 0, 0, 0, 0
+    print(f"Processing metrics for: {guard_label}...")
+    for entry in data:
+        is_benign: bool = entry["classification"] == "benign"
+        is_safe: bool = guard.is_safe(entry["prompt"])
 
-    evaluator: AttackEvaluator = AttackEvaluator("tinyllama", 0.1)
-    metrics_calc: MetricsCalculator = MetricsCalculator()
+        if is_benign and is_safe:
+            tp += 1
+        elif is_benign and not is_safe:
+            fn += 1
+        elif not is_benign and is_safe:
+            fp += 1
+        else:
+            tn += 1
 
-    def calculate_and_write_metrics(
-        data: list[dict[str, Any]],
-        guard,
-        guard_label: str,
-        output_file: TextIO,
-    ):
-        tp, fn, fp, tn = 0, 0, 0, 0
-        print(f"Processing metrics for: {guard_label}...")
-        for entry in data:
-            classification: bool = entry["classification"] == "benign"
-            result: bool = guard.is_safe(entry["prompt"])
-            if classification and result:
-                tp += 1
-            elif classification and not result:
-                fn += 1
-            elif not classification and result:
-                fp += 1
-            else:
-                tn += 1
+    precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+    sensitivity = tp / (tp + fn) if (tp + fn) > 0 else 0
+    specificity = tn / (tn + fp) if (tn + fp) > 0 else 0
+    npv = tn / (tn + fn) if (tn + fn) > 0 else 0
+    accuracy = (tp + tn) / (tp + tn + fp + fn) if (tp + tn + fp + fn) > 0 else 0
 
-        precision = tp / (tp + fp) if (tp + fp) > 0 else 0
-        sensitivity = tp / (tp + fn) if (tp + fn) > 0 else 0
-        specificity = tn / (tn + fp) if (tn + fp) > 0 else 0
-        npv = tn / (tn + fn) if (tn + fn) > 0 else 0
-        accuracy = (tp + tn) / (tp + tn + fp + fn) if (tp + tn + fp + fn) > 0 else 0
+    _ = output_file.write(f"--- {guard_label} Metrics ---\n")
+    _ = output_file.write(f"Precision: {precision:.4f}\n")
+    _ = output_file.write(f"Sensitivity (Recall): {sensitivity:.4f}\n")
+    _ = output_file.write(f"Specificity: {specificity:.4f}\n")
+    _ = output_file.write(f"Negative Predictive Value: {npv:.4f}\n")
+    _ = output_file.write(f"Accuracy: {accuracy:.4f}\n\n")
 
-        _ = output_file.write(f"--- {guard_label} Metrics ---\n")
-        _ = output_file.write(f"Precision: {precision}\n")
-        _ = output_file.write(f"Sensitivity (Recall): {sensitivity}\n")
-        _ = output_file.write(f"Specificity: {specificity}\n")
-        _ = output_file.write(f"Negative Predictive Value: {npv}\n")
-        _ = output_file.write(f"Accuracy: {accuracy}\n\n")
 
-    INPUT_FILE = "offence/combined_classified_prompts.json"
-    OUTPUT_FILE = "all_metrics_results.txt"
+@hydra.main(version_base=None, config_path="conf", config_name="config")
+def main(cfg: DictConfig) -> None:
+    print("--- Configuration ---")
+    print(OmegaConf.to_yaml(cfg))
+    print("---------------------\n")
 
-    guards = {
-        "Heuristic": heuristic_guard,
-        "Classifier Cluster": cluster_guard,
-        "ShieldGemma": llm_guard,
+    if "shieldgemma" in cfg.active_defences and not cfg.huggingface_token:
+        raise ValueError(
+            "ShieldGemma is active, but HUGGING_FACE_TOKEN is missing. "
+            "Please set it in your environment, config file, or pass as a param"
+        )
+
+    model_dir_path = Path(cfg.model_dir)
+    model_files_exist = any(model_dir_path.glob("*.joblib"))
+    should_train = cfg.train or not model_files_exist
+
+    if should_train:
+        if not model_files_exist:
+            print("Model artifacts (*.joblib) not found. Forcing training...")
+        else:
+            print("Starting training as requested by 'train=true' configuration.")
+        try:
+            trainer = JailbreakClassifier(
+                json_file_path=cfg.input_file, model_output_dir=cfg.model_dir
+            )
+            trainer.train()
+            print("\nTraining finished successfully.")
+        except FileNotFoundError:
+            print(f"Error: Training file '{cfg.input_file}' not found.")
+        except Exception as e:
+            print(f"An error occurred during training: {e}")
+    else:
+        print(f"Skipping training: Model artifacts already exist in '{cfg.model_dir}' and 'train=false'.")
+
+    print("-" * 20)
+
+    guards = {}
+    guard_factory = {
+        "heuristic": lambda: HeuristicVectorAnalyzer(3, 3),
+        "svm": lambda: JailbreakInferenceAPI(cfg.model_dir),
+        "cluster": lambda: ClassifierCluster(),
+        "shieldgemma": lambda: ShieldGemma2BClassifier(cfg.huggingface_token),
     }
 
-    with open(INPUT_FILE, "r") as fh_in:
+    print("Initializing selected guards...")
+    for guard_name in cfg.active_defences:
+        if guard_name in guard_factory:
+            guards[guard_name.capitalize()] = guard_factory[guard_name]()
+            print(f"- {guard_name.capitalize()} guard initialized.")
+        else:
+            print(f"Warning: Guard '{guard_name}' not recognized and will be skipped.")
+    print("-" * 20)
+
+    with open(cfg.input_file, "r") as fh_in:
         data_to_process: list[dict[str, Any]] = json.load(fh_in)
 
-    with open(OUTPUT_FILE, "w") as fh_out:
-        for label, guard_instance in guards.items():
+    open(cfg.output_file, "w").close()
+
+    for label, guard_instance in guards.items():
+        with open(cfg.output_file, "a") as fh_out:
             calculate_and_write_metrics(data_to_process, guard_instance, label, fh_out)
 
+    print(f"\nResults appended to '{cfg.output_file}'")
+
+
+if __name__ == "__main__":
+    main()

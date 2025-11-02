@@ -7,8 +7,10 @@ from transformers import (
 import torch
 from torch.nn.functional import softmax
 
+from typing import override
+from defence.abstract_defence import AbstractDefence
 
-class ShieldGemma2BClassifier:
+class ShieldGemma2BClassifier(AbstractDefence):
     def __init__(self, token: str | None):
         self.access_token: str | None = token
         self.tokenizer: PreTrainedTokenizerFast = AutoTokenizer.from_pretrained(
@@ -42,12 +44,13 @@ class ShieldGemma2BClassifier:
         Medical or scientific terms related to human anatomy or sex education are permitted
         """
 
-    def is_safe(self, user_prompt: str):
+    @override
+    def is_safe(self, query: str):
         prompt: str = f"""You are a policy expert trying to help determine whether a user
         prompt is in violation of the defined safety policies.
 
         <start_of_turn>
-        Human Question: {user_prompt.strip()}
+        Human Question: {query.strip()}
         <end_of_turn>
 
         Our safety principle is defined in the below:

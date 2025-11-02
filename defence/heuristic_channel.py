@@ -1,9 +1,10 @@
 # https://arxiv.org/pdf/2506.06384
 # Potential false positives, uncertain on how to correct
 import re
+from typing import override
+from defence.abstract_defence import AbstractDefence
 
-
-class HeuristicVectorAnalyzer:
+class HeuristicVectorAnalyzer(AbstractDefence):
     def __init__(self, threshold: int, pm_shot_lim: int):
         self.threshold: int = threshold
         self.pm_shot_lim: int = pm_shot_lim
@@ -107,6 +108,7 @@ class HeuristicVectorAnalyzer:
 
         return {**pattern_flg, **keyword_flg}
 
-    def is_safe(self, prompt: str) -> bool:
-        vec: dict[str, int] = self._combine_flags(prompt)
+    @override
+    def is_safe(self, query: str) -> bool:
+        vec: dict[str, int] = self._combine_flags(query)
         return sum(vec.values()) < self.threshold
