@@ -2,7 +2,6 @@ import joblib
 from pathlib import Path
 import emoji
 import string
-import nltk
 from nltk.corpus import wordnet, stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk import pos_tag, word_tokenize
@@ -23,7 +22,6 @@ class TextPreProcessor:
         return tag_dict.get(tag, wordnet.NOUN)
 
     def preprocess(self, text: str) -> str:
-        if not isinstance(text, str): return ""
         text = text.lower()
         text = emoji.demojize(text)
         text = text.translate(str.maketrans('', '', string.punctuation))
