@@ -1,0 +1,8 @@
+input_file: offence/combined_classified_prompts.json
+output_file: results/all_metrics_results.txt
+model_dir: model_artifacts
+train: true
+active_defences:
+- heuristic
+- svm
+huggingface_token: ${oc.env:HUGGING_FACE_TOKEN, null}

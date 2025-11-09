@@ -111,8 +111,12 @@ class JailbreakClassifier:
         X = df['clean_prompt'].fillna('')
         y = df['classification']
 
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42, stratify=y
+        X_train, X_temp, y_train, y_temp = train_test_split(
+            X, y, test_size=0.4, random_state=42, stratify=y
+        )
+
+        X_val, X_test, y_val, y_test = train_test_split(
+            X_temp, y_temp, test_size=0.5, random_state=42, stratify=y_temp
         )
 
         vectorizer = TfidfVectorizer(max_features=17000, ngram_range=(1, 2))
@@ -120,6 +124,11 @@ class JailbreakClassifier:
 
         model = LinearSVC(C=1.0, class_weight='balanced', max_iter=2000, random_state=42)
         model.fit(X_train_vec, y_train)
+
+        print("\n--- Performance on Validation Data ---")
+        X_val_vec = vectorizer.transform(X_val)
+        y_pred_val = model.predict(X_val_vec)
+        print(classification_report(y_val, y_pred_val, zero_division=0))
 
         print("\n--- Performance on Unseen Test Data ---")
         X_test_vec = vectorizer.transform(X_test)

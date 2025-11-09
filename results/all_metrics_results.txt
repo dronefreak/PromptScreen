@@ -1,14 +1,7 @@
---- Heuristic Metrics ---
-Precision: 0.5238
-Sensitivity (Recall): 0.9946
-Specificity: 0.0956
-Negative Predictive Value: 0.9469
-Accuracy: 0.5451
-
 --- Svm Metrics ---
-Precision: 1.0000
-Sensitivity (Recall): 1.0000
-Specificity: 1.0000
-Negative Predictive Value: 1.0000
-Accuracy: 1.0000
+Precision: 0.9988
+Sensitivity (Recall): 0.9729
+Specificity: 0.9989
+Negative Predictive Value: 0.9736
+Accuracy: 0.9859
 

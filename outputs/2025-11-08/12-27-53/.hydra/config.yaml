@@ -1,0 +1,7 @@
+input_file: offence/test_attacks.json
+output_file: results/all_metrics_results.txt
+model_dir: model_artifacts
+train: true
+active_defences:
+- svm
+huggingface_token: ${oc.env:HUGGING_FACE_TOKEN, null}
