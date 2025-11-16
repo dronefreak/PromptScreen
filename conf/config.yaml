@@ -1,10 +1,26 @@
+mode: evaluate
+
 input_file: "offence/test_attacks.json"
 output_file: "results/all_metrics_results.txt"
 model_dir: "model_artifacts"
+threat_file: "data/threats.json"
 
 train: true
 
+vectordb:
+  model: "all-MiniLM-L6-v2"
+  collection: "threat_prompts"
+  db_dir: "./chroma_db"
+  n_results: 5
+  threshold: 0.25
+
 active_defences:
   - svm
+  - vectordb
+  - shieldgemma
 
 huggingface_token: ${oc.env:HUGGING_FACE_TOKEN, null}
+
+api:
+  host: "127.0.0.1"
+  port: "8000"

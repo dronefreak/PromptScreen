@@ -9,6 +9,7 @@ from torch.nn.functional import softmax
 
 from typing import override
 from defence.abstract_defence import AbstractDefence
+from defence.ds.analysis_result import AnalysisResult
 
 class ShieldGemma2BClassifier(AbstractDefence):
     def __init__(self, token: str | None):
@@ -45,7 +46,7 @@ class ShieldGemma2BClassifier(AbstractDefence):
         """
 
     @override
-    def is_safe(self, query: str):
+    def analyse(self, query: str) -> AnalysisResult:
         prompt: str = f"""You are a policy expert trying to help determine whether a user
         prompt is in violation of the defined safety policies.
 
@@ -70,4 +71,4 @@ class ShieldGemma2BClassifier(AbstractDefence):
         probabilities: torch.Tensor = softmax(selected_logits, dim=0)
         score: float = probabilities[0].item()
 
-        return score <= 0.5
+        return AnalysisResult("ShieldGemma", score <= 0.5)

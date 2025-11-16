@@ -8,6 +8,7 @@ from nltk import pos_tag, word_tokenize
 
 from typing import override
 from defence.abstract_defence import AbstractDefence
+from defence.ds.analysis_result import AnalysisResult
 
 class TextPreProcessor:
     def __init__(self, custom_stopwords=None):
@@ -43,8 +44,8 @@ class JailbreakInferenceAPI(AbstractDefence):
         self.preprocessor = TextPreProcessor()
 
     @override
-    def is_safe(self, query: str) -> bool:
+    def analyse(self, query: str) -> AnalysisResult:
         clean_prompt = self.preprocessor.preprocess(query)
         vectorized_prompt = self.vectorizer.transform([clean_prompt])
         prediction = self.model.predict(vectorized_prompt)
-        return prediction[0] != 'jailbreak'
+        return AnalysisResult("Semantic SVM classifier", prediction[0] != 'jailbreak')

@@ -3,6 +3,7 @@
 import re
 from typing import override
 from defence.abstract_defence import AbstractDefence
+from defence.ds.analysis_result import AnalysisResult
 
 class HeuristicVectorAnalyzer(AbstractDefence):
     def __init__(self, threshold: int, pm_shot_lim: int):
@@ -109,6 +110,6 @@ class HeuristicVectorAnalyzer(AbstractDefence):
         return {**pattern_flg, **keyword_flg}
 
     @override
-    def is_safe(self, query: str) -> bool:
+    def analyse(self, query: str) -> AnalysisResult:
         vec: dict[str, int] = self._combine_flags(query)
-        return sum(vec.values()) < self.threshold
+        return AnalysisResult("Heuristic channel", sum(vec.values()) < self.threshold)

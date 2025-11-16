@@ -168,3 +168,8 @@ poetry.toml
 
 # LSP config files
 pyrightconfig.json
+
+chroma_db/
+data/
+outputs/
+model_artifacts/

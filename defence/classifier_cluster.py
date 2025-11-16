@@ -1,5 +1,6 @@
 import torch
 from torch.types import Number, Tensor
+from defence.ds.analysis_result import AnalysisResult
 from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
@@ -43,7 +44,7 @@ class ClassifierCluster(AbstractDefence):
             truncation=True,
             return_overflowing_tokens=True,
             stride=50,
-            padding = "max_length",
+            padding="max_length",
             return_tensors="pt",
         )
 
@@ -71,7 +72,7 @@ class ClassifierCluster(AbstractDefence):
             query,
             max_length=self.tox_mx_tokens,
             truncation=True,
-            padding = "max_length",
+            padding="max_length",
             return_overflowing_tokens=True,
             stride=50,
             return_tensors="pt",
@@ -97,5 +98,9 @@ class ClassifierCluster(AbstractDefence):
         return False
 
     @override
-    def is_safe(self, query: str) -> bool:
-        return not (self._is_jailbreak(query) or self._is_toxic(query))
+    def analyse(self, query: str) -> AnalysisResult:
+        return AnalysisResult(
+            "Classification Cluster",
+            not (self._is_jailbreak(query) or self._is_toxic(query)),
+        )
+
