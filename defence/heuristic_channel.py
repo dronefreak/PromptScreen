@@ -91,13 +91,11 @@ class HeuristicVectorAnalyzer(AbstractDefence):
     def _pattern_match_vector(self, prompt: str) -> dict[str, int]:
         flags: dict[str, int] = {}
 
-        # Many shot attack
         qa_pairs = re.findall(
             r"(?:Q:|Question:).*?(?:A:|Answer:)", prompt, re.IGNORECASE | re.DOTALL
         )
         flags["is_shot_attack"] = 1 if len(qa_pairs) > self.pm_shot_lim else 0
 
-        # Repeated token attack hardcoded to 3
         repeated_wd = re.search(r"\b(\w+)\b(?:\s+\1\b){2,}", prompt, re.IGNORECASE)
         flags["is_repeated_token"] = 1 if repeated_wd else 0
 

@@ -4,6 +4,7 @@ from omegaconf import DictConfig
 
 from guards import initialize_guards, initialize_all_guards
 from ds_metrics import run_suite
+from pipeline import evaluate
 
 from api import create_app
 
@@ -17,13 +18,18 @@ def main(cfg: DictConfig) -> None:
         app = create_app(guards)
         uvicorn.run(app, host=cfg.api.host, port=cfg.api.port)
 
-    elif cfg.mode == "evaluate":
+    elif cfg.mode == "stats":
         print("Running Data Science evaluation suite...")
         guards = initialize_guards(cfg)
         run_suite(cfg, guards)
 
+    elif cfg.mode == "pipeline":
+        print("Running pipeline with configured subset of defences")
+        guards = initialize_guards(cfg)
+        evaluate(cfg, guards)
+
     else:
-        print(f"Error: Unknown mode '{cfg.mode}'. Please use 'api' or 'evaluate'.")
+        print(f"Error: Unknown mode '{cfg.mode}'. Please use 'api', 'stats' or 'pipeline'.")
 
 
 if __name__ == "__main__":

@@ -1,11 +1,12 @@
-mode: evaluate
+mode: pipeline
 
-input_file: "offence/test_attacks.json"
-output_file: "results/all_metrics_results.txt"
+input_file: "offence/metrics_test_set.json"
+output_file: "results/results.txt"
 model_dir: "model_artifacts"
-threat_file: "data/threats.json"
+threat_file: "offence/malignant.json"
 
 train: true
+train_file: "offence/metrics_train_set.json"
 
 vectordb:
   model: "all-MiniLM-L6-v2"
@@ -16,8 +17,7 @@ vectordb:
 
 active_defences:
   - svm
-  - vectordb
-  - shieldgemma
+  - heuristic
 
 huggingface_token: ${oc.env:HUGGING_FACE_TOKEN, null}
 
