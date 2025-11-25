@@ -1,0 +1,35 @@
+Original(dedup.json):
+
+Total Rows: 30937
+classification
+jailbreak           18701
+benign              10136
+prompt-injection     2100
+Name: count, dtype: int64
+----------------------------------------
+
+Test set(metrics_test_set.json):
+Total Rows: 2166
+classification
+jailbreak           1309
+benign               710
+prompt-injection     147
+Name: count, dtype: int64
+----------------------------------------
+
+Remaining(metrics_train_set.json):
+Total Rows: 28771
+classification
+jailbreak           17392
+benign               9426
+prompt-injection     1953
+Name: count, dtype: int64
+----------------------------------------
+
+Malignant attacks only (malignant.json)
+Total Rows: 19345
+classification
+jailbreak           17392
+prompt-injection     1953
+Name: count, dtype: int64
+----------------------------------------
