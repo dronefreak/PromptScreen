@@ -3,7 +3,7 @@ from typing import List, Dict, Any, Optional
 from dataclasses import dataclass, asdict
 from datetime import datetime
 import statistics
-from langchain_google_genai import ChatGoogleGenerativeAI
+from query_agent import QueryAgent
 
 
 @dataclass
@@ -25,11 +25,7 @@ class AttackEvaluator:
     def __init__(self, model_name: str, temperature: float = 0.1):
         self.model_name = model_name
         self.temperature = temperature
-        self.llm = ChatGoogleGenerativeAI(
-            model="gemini-2.5-flash",
-            temperature=temperature,
-            google_api_key=os.environ.get("GEMINI_API_KEY"),
-        )
+        self.llm = QueryAgent("tinyllama")
 
     def evaluate(
         self, classification_time: float, output: str, prompt: str, **kwargs
@@ -57,8 +53,8 @@ class AttackEvaluator:
             "}\n"
         )
 
-        evaluation = self.llm.invoke(evaluation_prompt)
-        result = self._safe_json_loads(evaluation.content)
+        evaluation = self.llm.query(evaluation_prompt)
+        result = self._safe_json_loads(evaluation)
         return AttackResult(
             prompt=prompt,
             response=output,
@@ -320,4 +316,6 @@ if __name__ == "__main__":
     # Show final result after all prompts
     metrics_calc.evaluate()
 """
+
+
 
