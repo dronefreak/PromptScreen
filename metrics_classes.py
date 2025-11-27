@@ -284,38 +284,5 @@ TIME-TO-CLASSIFY METRICS:
         print("=" * 60)
 
 
-"""
-if __name__ == "__main__":
-    query_agent: QueryAgent = QueryAgent("llama3.2:3b")
-    guard: ClassifierCluster = ClassifierCluster()
-    evaluator = AttackEvaluator("llama3.2:3b", 0.1) # name of the model, temperature
-    metrics_calc = MetricsCalculator()
-
-    with open("prompts.json", "r") as fh:
-        data = json.load(fh)  
-        prompts: list[str] = data["prompts"]
-
-    for prompt in prompts:
-        # (1) Pass it through the cluster
-        # (2) If cluster fails: add a failed attack to list
-        # (3) If success: evaluate the attack.
-        if (guard.is_safe(prompt)):
-            start_time = time.time()
-            output: str = query_agent.query(prompt)
-            response_time = time.time() - start_time
-
-            # Create a new AttackResult object
-            attack_result = evaluator.evaluate(response_time, output, prompt)
-            metrics_calc.add_result(attack_result) # -> Add to the list member variables
-        else:
-            # Create a failed attack_result
-            failed_result = evaluator.create_failed_attempt(prompt)
-            # Alter: failed_attempt: AttackResult(success = false)
-            metrics_calc.add_result(failed_result)
-
-    # Show final result after all prompts
-    metrics_calc.evaluate()
-"""
-
 
 
