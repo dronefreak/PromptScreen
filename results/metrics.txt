@@ -1,0 +1,16 @@
+============================================================
+LLM ATTACK SIMULATION RESULTS
+============================================================
+Generated: 2025-11-27 08:40:26
+
+ATTACK SUCCESS RATE METRICS:
+- Overall ASR: 0.00%
+- Success Percentage: 0.00%
+- Successful Attacks: 0
+- Total Attempts: 1456
+- Attempted Attacks: 51
+- Blocked by Guard: 1405
+
+TIME-TO-CLASSIFY METRICS:
+- No successful attacks to calculate time metrics
+============================================================
