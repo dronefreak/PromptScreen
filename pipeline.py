@@ -18,6 +18,7 @@ def evaluate(cfg: DictConfig, guards: dict[str, AbstractDefence]) -> None:
         data = json.load(fh)
 
     count = 0
+    total_time = 0
     for entry in data:
         if entry["classification"] == "benign":
             continue
@@ -25,7 +26,6 @@ def evaluate(cfg: DictConfig, guards: dict[str, AbstractDefence]) -> None:
         prompt: str = entry["prompt"]
         deemed_unsafe = False
         start_time = time.time()
-        end_time = time.time()
         for name, guard in guards.items():
             result = guard.analyse(prompt)
 
@@ -44,5 +44,8 @@ def evaluate(cfg: DictConfig, guards: dict[str, AbstractDefence]) -> None:
             attack_result = evaluator.evaluate(end_time - start_time, response, prompt)
             metrics_calc.add_result(attack_result)
         count += 1
+        total_time += time.time() - start_time
 
     metrics_calc.evaluate()
+    if count != 0:
+        print(f"Average time taken: {total_time / count}")
