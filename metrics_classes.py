@@ -25,7 +25,7 @@ class AttackEvaluator:
     def __init__(self, model_name: str, temperature: float = 0.1):
         self.model_name = model_name
         self.temperature = temperature
-        self.llm = QueryAgent("tinyllama")
+        self.llm = QueryAgent("llama3.2:3b")
 
     def evaluate(
         self, classification_time: float, output: str, prompt: str, **kwargs
