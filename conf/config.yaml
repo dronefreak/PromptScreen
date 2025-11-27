@@ -17,6 +17,7 @@ vectordb:
 
 active_defences:
   - svm
+  - vectordb
 
 huggingface_token: ${oc.env:HUGGING_FACE_TOKEN, null}
 

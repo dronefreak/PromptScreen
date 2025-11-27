@@ -7,8 +7,8 @@ from output_scanners.scan import OutputScanner
 
 
 def evaluate(cfg: DictConfig, guards: dict[str, AbstractDefence]) -> None:
-    query_agent = QueryAgent("llama3.2:3b")
-    evaluator = AttackEvaluator("llama3.2:3b", 0.1)
+    query_agent = QueryAgent("gpt-oss:20b")
+    evaluator = AttackEvaluator("gpt-oss:20b", 0.1)
     metrics_calc = MetricsCalculator()
     scanner = OutputScanner()
 
