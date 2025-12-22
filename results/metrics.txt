@@ -1,5 +1,5 @@
 ============================================================
-LLM ATTACK SIMULATION RESULTS (SVM only)
+LLM ATTACK SIMULATION RESULTS (SVM + VectorDB + Classifier cluster)
 ============================================================
 Generated: 2025-11-27 08:40:26
 
@@ -14,6 +14,7 @@ ATTACK SUCCESS RATE METRICS:
 TIME-TO-CLASSIFY METRICS:
 - No successful attacks to calculate time metrics
 ============================================================
+Average time taken: 47.2443
 
 ============================================================
 LLM ATTACK SIMULATION RESULTS (VectorDB + Classifier cluster)
@@ -29,11 +30,11 @@ ATTACK SUCCESS RATE METRICS:
 - Blocked by Guard: 737
 
 TIME-TO-CLASSIFY METRICS:
-- Average Time: -40.98 seconds
-- Median Time: -13.21 seconds
-- Min Time: -348.25 seconds
-- Max Time: -0.00 seconds
+- Average Time: 40.98 seconds
+- Median Time: 13.21 seconds
+- Min Time: 348.25 seconds
+- Max Time: 0.00 seconds
 - Standard Deviation: 87.87 seconds
-- Total Classification Time: -614.73 seconds
+- Total Classification Time: 614.73 seconds
 ============================================================
 Average time taken: 30.131335945411042

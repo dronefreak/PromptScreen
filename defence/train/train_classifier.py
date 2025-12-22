@@ -5,6 +5,7 @@ import emoji
 import nltk
 from pathlib import Path
 import joblib
+import numpy as np
 
 from nltk.corpus import wordnet, stopwords
 from nltk.stem import WordNetLemmatizer
@@ -13,6 +14,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from sklearn.svm import LinearSVC
+from sklearn.pipeline import FeatureUnion
+from sklearn.preprocessing import FunctionTransformer
 
 _ = nltk.download("wordnet")
 _ = nltk.download("stopwords")
@@ -60,12 +63,45 @@ class TextPreProcessor:
         return df_copy
 
 
+def length_complexity_features(texts):
+    features = []
+    attack_keywords = {"ignore", "system", "prompt", "act", "as", "instruction", "follow", "previous"}
+    for text in texts:
+        char_len = len(text)
+        word_len = len(text.split())
+        char_no_space = len(text.replace(' ', ''))
+
+        words = text.split()
+        if word_len > 0:
+            avg_word_len = np.mean([len(w) for w in words])
+            punct_ratio = text.count('.') / char_len if char_len > 0 else 0
+            attack_density = sum(1 for w in words if w in attack_keywords) / word_len
+            repetition_score = max([words.count(w) for w in set(words)]) / word_len if word_len > 0 else 0
+        else:
+            avg_word_len = 0
+            punct_ratio = 0
+            attack_density = 0
+            repetition_score = 0
+
+        features.append([
+            char_len / 1000,
+            word_len / 100,
+            char_no_space / 1000,
+            avg_word_len,
+            punct_ratio,
+            attack_density,
+            repetition_score,
+            1.0 / (1 + word_len)
+        ])
+    return np.array(features)
+
+
 class JailbreakClassifier:
     def __init__(self, json_file_path: str, model_output_dir: str = None):
         self.json_file_path = json_file_path
         self.model_output_dir = Path(model_output_dir) if model_output_dir else None
         self.preprocessor = TextPreProcessor()
-        self.vectorizer = None
+        self.feature_union = None
         self.model = None
         self.df = None
 
@@ -77,34 +113,37 @@ class JailbreakClassifier:
         self.df = self.preprocessor.preprocess_df(self.df, "prompt")
 
     def _train_model(self):
-        X = self.df["clean_prompt"].fillna("")
+        X_text = self.df["clean_prompt"].fillna("")
         y = self.df["classification"]
 
-        self.vectorizer = TfidfVectorizer(max_features=17000, ngram_range=(1, 2))
-        X_vec = self.vectorizer.fit_transform(X)
+        self.feature_union = FeatureUnion([
+            ('tfidf', TfidfVectorizer(max_features=17000, ngram_range=(1, 2))),
+            ('length_features', FunctionTransformer(length_complexity_features))
+        ])
 
+        X_features = self.feature_union.fit_transform(X_text)
         self.model = LinearSVC(
             C=1.0, class_weight="balanced", max_iter=2000, random_state=42
         )
-        self.model.fit(X_vec, y)
+        self.model.fit(X_features, y)
 
         if self.model_output_dir:
             self.model_output_dir.mkdir(parents=True, exist_ok=True)
             joblib.dump(
-                self.vectorizer, self.model_output_dir / "tfidf_vectorizer.joblib"
+                self.feature_union, self.model_output_dir / "feature_union.joblib"
             )
             joblib.dump(self.model, self.model_output_dir / "linear_svm_model.joblib")
-            print(f"Model and vectorizer saved to '{self.model_output_dir}'.")
+            print(f"Enhanced model (TF-IDF + 8 length features) saved to '{self.model_output_dir}'.")
 
     def classify_prompt(self, prompt: str) -> str:
-        if not self.model or not self.vectorizer:
+        if not self.model or not self.feature_union:
             raise RuntimeError(
                 "Model is not trained. Please run the train() method first."
             )
 
         clean_prompt = self.preprocessor.preprocess(prompt)
-        vectorized_prompt = self.vectorizer.transform([clean_prompt])
-        prediction = self.model.predict(vectorized_prompt)
+        features = self.feature_union.transform([clean_prompt])
+        prediction = self.model.predict(features)
         return prediction[0]
 
     def train(self):
@@ -138,37 +177,41 @@ class JailbreakClassifier:
             X_temp, y_temp, test_size=0.5, random_state=42, stratify=y_temp
         )
 
-        vectorizer = TfidfVectorizer(max_features=17000, ngram_range=(1, 2))
-        X_train_vec = vectorizer.fit_transform(X_train)
-
+        feature_union = FeatureUnion([
+            ('tfidf', TfidfVectorizer(max_features=17000, ngram_range=(1, 2))),
+            ('length_features', FunctionTransformer(length_complexity_features))
+        ])
+        X_train_features = feature_union.fit_transform(X_train)
         model = LinearSVC(
             C=1.0, class_weight="balanced", max_iter=2000, random_state=42
         )
-        model.fit(X_train_vec, y_train)
+        model.fit(X_train_features, y_train)
 
         print("\n--- Validation ---")
-        X_val_vec = vectorizer.transform(X_val)
-        y_pred_val = model.predict(X_val_vec)
+        X_val_features = feature_union.transform(X_val)
+        y_pred_val = model.predict(X_val_features)
         print(classification_report(y_val, y_pred_val, zero_division=0))
 
         print("\n--- Unseen Test ---")
-        X_test_vec = vectorizer.transform(X_test)
-        y_pred = model.predict(X_test_vec)
+        X_test_features = feature_union.transform(X_test)
+        y_pred = model.predict(X_test_features)
         print(classification_report(y_test, y_pred))
         print("--------------------------------------------\n")
 
-        self.vectorizer = TfidfVectorizer(max_features=17000, ngram_range=(1, 2))
-        X_full_vec = self.vectorizer.fit_transform(X)
-
+        self.feature_union = FeatureUnion([
+            ('tfidf', TfidfVectorizer(max_features=17000, ngram_range=(1, 2))),
+            ('length_features', FunctionTransformer(length_complexity_features))
+        ])
+        X_full_features = self.feature_union.fit_transform(X)
         self.model = LinearSVC(
             C=1.0, class_weight="balanced", max_iter=2000, random_state=42
         )
-        self.model.fit(X_full_vec, y)
+        self.model.fit(X_full_features, y)
 
         if self.model_output_dir:
             self.model_output_dir.mkdir(parents=True, exist_ok=True)
             joblib.dump(
-                self.vectorizer, self.model_output_dir / "tfidf_vectorizer.joblib"
+                self.feature_union, self.model_output_dir / "feature_union.joblib"
             )
             joblib.dump(self.model, self.model_output_dir / "linear_svm_model.joblib")
-            print(f"Final model and vectorizer saved to '{self.model_output_dir}'.")
+            print(f"Final enhanced model saved to '{self.model_output_dir}'.")
