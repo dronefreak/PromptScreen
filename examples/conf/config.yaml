@@ -1,14 +1,14 @@
 mode: pipeline
 
 output_file: "results/results.txt"
-model_dir: "model_artifacts"
+model_dir: model_artifacts
 
 train: true
 
-threat_file: ../offence/metrics_test_set.json
-train_file: ../offence/metrics_train_set.json
-input_file: ../offence/metrics_test_set.json
-test_file: ../offence/metrics_test_set.json
+threat_file: offence/metrics_test_set.json
+train_file: offence/metrics_train_set.json
+input_file: offence/metrics_test_set.json
+test_file: offence/metrics_test_set.json
 
 vectordb:
   model: "all-MiniLM-L6-v2"

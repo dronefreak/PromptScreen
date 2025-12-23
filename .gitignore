@@ -170,6 +170,5 @@ poetry.toml
 pyrightconfig.json
 
 chroma_db/
-data/
 outputs/
 model_artifacts/

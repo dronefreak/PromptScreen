@@ -1,4 +1,5 @@
 import os
+from ..data import RULES_DIR
 import yara
 from typing import override
 from .abstract_defence import AbstractDefence
@@ -6,10 +7,14 @@ from .ds.analysis_result import AnalysisResult
 
 
 class Scanner(AbstractDefence):
-    def __init__(self, rules_dir: str):
+    def __init__(self, rules_dir: str = None):
+        if rules_dir is None:
+            # Use bundled rules by default
+            rules_dir = str(RULES_DIR)
+        
         if not os.path.exists(rules_dir) or not os.path.isdir(rules_dir):
             raise FileNotFoundError(f"YARA rules directory '{rules_dir}' not found or invalid.")
-
+        
         self.rules_dir = rules_dir
         self.compiled_rules = None
         self._load_rules()
