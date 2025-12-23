@@ -169,7 +169,32 @@ poetry.toml
 # LSP config files
 pyrightconfig.json
 
+# Generated data
 chroma_db/
-data/
 outputs/
-model_artifacts/
+results/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+.mypy_cache/
+.ruff_cache/
+
+# Environment
+.env
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Models (optional - decide if we want to commit these)
+# model_artifacts/*.joblib
