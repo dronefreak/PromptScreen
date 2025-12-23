@@ -1,0 +1,27 @@
+mode: pipeline
+
+output_file: "results/results.txt"
+model_dir: "model_artifacts"
+
+train: true
+
+threat_file: ../offence/metrics_test_set.json
+train_file: ../offence/metrics_train_set.json
+input_file: ../offence/metrics_test_set.json
+test_file: ../offence/metrics_test_set.json
+
+vectordb:
+  model: "all-MiniLM-L6-v2"
+  collection: "threat_prompts"
+  db_dir: "./chroma_db"
+  n_results: 5
+  threshold: 0.25
+
+active_defences:
+  - svm
+
+huggingface_token: ${oc.env:HUGGING_FACE_TOKEN, null}
+
+api:
+  host: "127.0.0.1"
+  port: "8000"
