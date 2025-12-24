@@ -1,5 +1,0 @@
-input_file: offence/combined_classified_prompts.json
-output_file: results/all_metrics_results.txt
-model_dir: model_artifacts
-active_defences:
-- svm

@@ -6,7 +6,9 @@ readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "Apache-2.0"}
 authors = [
-    {name = "Saumya Saksena", email = "your.email@example.com"}  # Update email
+    {name = "Akshaj Rao", email = "kumaar324@gmail.com"},
+    {name = "Advait Singh", email = "kumaar324@gmail.com"},
+    {name = "Saumya Saksena", email = "kumaar324@gmail.com"},
 ]
 keywords = ["llm", "prompt-injection", "jailbreak", "security", "ai-safety"]
 classifiers = [
@@ -63,8 +65,17 @@ eval = [
 
 # All optional dependencies
 all = [
-    "promptscreen[ml,vectordb,api,eval]",
+    "torch>=2.0.0",
+    "transformers>=4.30.0",
+    "sentence-transformers>=2.0.0",
+    "chromadb>=0.4.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.20.0",
+    "langchain-ollama>=1.0.0",
+    "omegaconf>=2.3.0",
+    "hydra-core>=1.3.0",
 ]
+
 
 # Development tools
 dev = [
