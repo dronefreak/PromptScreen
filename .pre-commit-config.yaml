@@ -36,7 +36,7 @@ repos:
       # Security
       - id: detect-private-key
 
-  # Ruff - Fast Python linter
+  # Ruff - Fast Python linter (includes isort functionality)
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.1.15
     hooks:
@@ -47,7 +47,7 @@ repos:
       - id: ruff-format
         types_or: [python, pyi]
 
-  # Black - Python code formatter
+  # Black - Python code formatter (for consistency with ruff-format)
   - repo: https://github.com/psf/black
     rev: 23.12.1
     hooks:
@@ -55,12 +55,7 @@ repos:
         language_version: python3
         args: [--line-length=88]
 
-  # isort - Sort Python imports
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        args: [--profile=black, --line-length=88]
+  # NOTE: isort removed - ruff handles import sorting with "I" rule
 
   # Prettier - Format YAML, JSON, Markdown
   - repo: https://github.com/pre-commit/mirrors-prettier
