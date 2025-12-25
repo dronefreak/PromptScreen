@@ -267,7 +267,7 @@ guards = [
 # Total: ~2-3s per prompt, requires GPU for reasonable speed
 ```
 
-### Guard Details
+<!-- ### Guard Details
 
 #### 🎯 HeuristicVectorAnalyzer
 
@@ -486,7 +486,7 @@ pip install -e ".[ml]"
 ```bash
 pip install -e ".[vectordb]"
 # Includes: VectorDBScanner
-```
+``` -->
 
 ---
 
