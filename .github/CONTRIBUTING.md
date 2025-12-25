@@ -7,7 +7,7 @@ Thanks for your interest in contributing! This document outlines how to set up y
 ### 1. Fork and Clone
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/Prompt-Injection-And-Jailbreaking.git
+git clone https://github.com/cross-codes/Prompt-Injection-And-Jailbreaking.git
 cd Prompt-Injection-And-Jailbreaking
 ```
 
