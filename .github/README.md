@@ -1,6 +1,6 @@
 # PromptScreen
 
-**Production-ready prompt injection and jailbreak detection for LLMs**
+**A prompt injection and jailbreak detection system for LLMs**
 
 [![🧪 Tests](https://img.shields.io/badge/GitHub-Tests-2088FF?logo=github&logoColor=white&style=for-the-badge)](https://github.com/cross-codes/Prompt-Injection-And-Jailbreaking/actions/workflows/tests.yml)
 [![📊 Codecov](https://img.shields.io/badge/Codecov-Coverage-FF4D00?logo=codecov&logoColor=white&style=for-the-badge)](https://codecov.io/gh/cross-codes/Prompt-Injection-And-Jailbreaking)
