@@ -26,7 +26,7 @@ def perturb_prompt(prompt, num_perturbations=2, perturbation_rate=0.3):
 
         if perturbation_type == "swap":  # teh → the
             if len(word) >= 2:
-                i, j = random.sample(range(len(word)), 2)
+                i, j = random.sample(range(len(word)), 2)  # nosec B311
                 chars = list(word)
                 chars[i], chars[j] = chars[j], chars[i]
                 perturbed = "".join(chars)

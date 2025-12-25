@@ -81,10 +81,10 @@ repos:
 
   # Bandit - Security linter
   - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.6
+    rev: 1.9.2
     hooks:
       - id: bandit
-        args: [-c, pyproject.toml, -r, src/, --skip, B615]
+        args: [-c, pyproject.toml, -r, src/]
         additional_dependencies: ["bandit[toml]"]
 
   # Markdown linting
