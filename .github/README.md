@@ -210,16 +210,16 @@ PromptScreen provides **8 detection guards** with different trade-offs between s
 
 ### Guard Comparison
 
-| Guard                           | Speed        | Dependencies    | Best For              | Pros                                            | Cons                               |
-| ------------------------------- | ------------ | --------------- | --------------------- | ----------------------------------------------- | ---------------------------------- |
-| **HeuristicVectorAnalyzer**     | ⚡⚡⚡ Fast  | Core            | First-line defense    | No dependencies, very fast, low false positives | May miss sophisticated attacks     |
-| **Scanner** (YARA)              | ⚡⚡⚡ Fast  | Core            | Pattern matching      | Bundled rules, customizable, fast               | Requires rule maintenance          |
-| **InjectionScanner**            | ⚡⚡⚡ Fast  | Core            | Command injection     | Detects DNS/markdown exfiltration               | Regex-based, limited scope         |
-| **JailbreakInferenceAPI** (SVM) | ⚡⚡ Medium  | Core + Training | High accuracy         | Good balance of speed/accuracy                  | Requires training data             |
-| **VectorDBScanner**             | ⚡ Slow      | ChromaDB        | Known threat matching | Finds similar attacks                           | Needs threat database, slower      |
-| **ClassifierCluster**           | 🐌 Very Slow | ML (torch)      | Dual detection        | Toxicity + jailbreak detection                  | Heavy, ~2GB RAM                    |
-| **ShieldGemma2BClassifier**     | 🐌 Very Slow | ML (torch)      | Production accuracy   | Google's model, high accuracy                   | Very heavy, ~6GB RAM, 5GB download |
-| **PolymorphicPromptAssembler**  | ⚡⚡ Medium  | Core            | Defensive prompting   | Wraps user input safely                         | Not a detector, experimental       |
+| Guard                           | Speed     | Dependencies    | Best For              | Pros                                            | Cons                               |
+| ------------------------------- | --------- | --------------- | --------------------- | ----------------------------------------------- | ---------------------------------- |
+| **HeuristicVectorAnalyzer**     | Fast      | Core            | First-line defense    | No dependencies, very fast, low false positives | May miss sophisticated attacks     |
+| **Scanner** (YARA)              | Fast      | Core            | Pattern matching      | Bundled rules, customizable, fast               | Requires rule maintenance          |
+| **InjectionScanner**            | Fast      | Core            | Command injection     | Detects DNS/markdown exfiltration               | Regex-based, limited scope         |
+| **JailbreakInferenceAPI** (SVM) | Medium    | Core + Training | High accuracy         | Good balance of speed/accuracy                  | Requires training data             |
+| **VectorDBScanner**             | Slow      | ChromaDB        | Known threat matching | Finds similar attacks                           | Needs threat database, slower      |
+| **ClassifierCluster**           | Very Slow | ML (torch)      | Dual detection        | Toxicity + jailbreak detection                  | Heavy, ~2GB RAM                    |
+| **ShieldGemma2BClassifier**     | Very Slow | ML (torch)      | Production accuracy   | Google's model, high accuracy                   | Very heavy, ~6GB RAM, 5GB download |
+| **PolymorphicPromptAssembler**  | Medium    | Core            | Defensive prompting   | Wraps user input safely                         | Not a detector, experimental       |
 
 ### Quick Recommendations
 
