@@ -34,7 +34,7 @@ class TestQueryAgent:
         """Test query generation with history."""
         agent.history_lst = [("previous question", "previous answer")]
         prompt = agent._generate_query("new query", history=True)
-        
+
         assert "new query" in prompt
         assert "Conversation History" in prompt
         assert "previous question" in prompt

@@ -14,7 +14,7 @@ def evaluate(cfg: DictConfig, guards: dict[str, AbstractDefence]) -> None:
 
     print(f"Starting Pipeline Evaluation with {len(guards)} active defences...")
 
-    with open("offence/metrics_test_set.json", "r") as fh:
+    with open("offence/metrics_test_set.json") as fh:
         data = json.load(fh)
 
     count = 0

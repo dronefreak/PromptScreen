@@ -1,9 +1,10 @@
 """Shared test fixtures for all tests."""
-import pytest
 import json
 import tempfile
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
+
+import pytest
 
 
 @pytest.fixture
@@ -48,13 +49,9 @@ def temp_dataset_file(
     """Create temporary dataset file for testing."""
     data = [
         {"prompt": p, "classification": "benign"} for p in sample_benign_prompts
-    ] + [
-        {"prompt": p, "classification": "jailbreak"} for p in sample_jailbreak_prompts
-    ]
+    ] + [{"prompt": p, "classification": "jailbreak"} for p in sample_jailbreak_prompts]
 
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".json", delete=False
-    ) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         json.dump(data, f)
         temp_path = Path(f.name)
 
@@ -73,6 +70,7 @@ def temp_model_dir() -> Generator[Path, None, None]:
 
     # Cleanup
     import shutil
+
     if temp_dir.exists():
         shutil.rmtree(temp_dir)
 
@@ -81,6 +79,7 @@ def temp_model_dir() -> Generator[Path, None, None]:
 def mock_attack_result():
     """Create mock AttackResult for testing."""
     from datetime import datetime
+
     from promptscreen.evaluation import AttackResult
 
     return AttackResult(

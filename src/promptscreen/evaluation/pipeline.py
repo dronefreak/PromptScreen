@@ -1,9 +1,12 @@
-import json, time
+import json
+import time
+
 from omegaconf import DictConfig
-from .metrics_classes import AttackEvaluator, MetricsCalculator
-from ..utils.query_agent import QueryAgent
+
 from ..defence.abstract_defence import AbstractDefence
 from ..output_scanners.scan import OutputScanner
+from ..utils.query_agent import QueryAgent
+from .metrics_classes import AttackEvaluator, MetricsCalculator
 
 
 def evaluate(cfg: DictConfig, guards: dict[str, AbstractDefence]) -> None:
@@ -14,11 +17,11 @@ def evaluate(cfg: DictConfig, guards: dict[str, AbstractDefence]) -> None:
 
     print(f"Starting Pipeline Evaluation with {len(guards)} active defences...")
 
-    with open("offence/metrics_test_set.json", "r") as fh:
+    with open("offence/metrics_test_set.json") as fh:
         data = json.load(fh)
 
     count = 0
-    total_time = 0
+    total_time: float = 0.0
     for entry in data:
         if entry["classification"] == "benign":
             continue
@@ -26,7 +29,7 @@ def evaluate(cfg: DictConfig, guards: dict[str, AbstractDefence]) -> None:
         prompt: str = entry["prompt"]
         deemed_unsafe = False
         start_time = time.time()
-        for name, guard in guards.items():
+        for _name, guard in guards.items():
             result = guard.analyse(prompt)
 
             if not result.get_verdict():

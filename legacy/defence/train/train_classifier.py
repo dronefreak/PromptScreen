@@ -65,34 +65,49 @@ class TextPreProcessor:
 
 def length_complexity_features(texts):
     features = []
-    attack_keywords = {"ignore", "system", "prompt", "act", "as", "instruction", "follow", "previous"}
+    attack_keywords = {
+        "ignore",
+        "system",
+        "prompt",
+        "act",
+        "as",
+        "instruction",
+        "follow",
+        "previous",
+    }
     for text in texts:
         char_len = len(text)
         word_len = len(text.split())
-        char_no_space = len(text.replace(' ', ''))
+        char_no_space = len(text.replace(" ", ""))
 
         words = text.split()
         if word_len > 0:
             avg_word_len = np.mean([len(w) for w in words])
-            punct_ratio = text.count('.') / char_len if char_len > 0 else 0
+            punct_ratio = text.count(".") / char_len if char_len > 0 else 0
             attack_density = sum(1 for w in words if w in attack_keywords) / word_len
-            repetition_score = max([words.count(w) for w in set(words)]) / word_len if word_len > 0 else 0
+            repetition_score = (
+                max([words.count(w) for w in set(words)]) / word_len
+                if word_len > 0
+                else 0
+            )
         else:
             avg_word_len = 0
             punct_ratio = 0
             attack_density = 0
             repetition_score = 0
 
-        features.append([
-            char_len / 1000,
-            word_len / 100,
-            char_no_space / 1000,
-            avg_word_len,
-            punct_ratio,
-            attack_density,
-            repetition_score,
-            1.0 / (1 + word_len)
-        ])
+        features.append(
+            [
+                char_len / 1000,
+                word_len / 100,
+                char_no_space / 1000,
+                avg_word_len,
+                punct_ratio,
+                attack_density,
+                repetition_score,
+                1.0 / (1 + word_len),
+            ]
+        )
     return np.array(features)
 
 
@@ -106,7 +121,7 @@ class JailbreakClassifier:
         self.df = None
 
     def _load_and_preprocess_data(self):
-        with open(self.json_file_path, "r", encoding="utf-8") as f:
+        with open(self.json_file_path, encoding="utf-8") as f:
             data = json.load(f)
 
         self.df = pd.DataFrame(data)
@@ -116,10 +131,12 @@ class JailbreakClassifier:
         X_text = self.df["clean_prompt"].fillna("")
         y = self.df["classification"]
 
-        self.feature_union = FeatureUnion([
-            ('tfidf', TfidfVectorizer(max_features=17000, ngram_range=(1, 2))),
-            ('length_features', FunctionTransformer(length_complexity_features))
-        ])
+        self.feature_union = FeatureUnion(
+            [
+                ("tfidf", TfidfVectorizer(max_features=17000, ngram_range=(1, 2))),
+                ("length_features", FunctionTransformer(length_complexity_features)),
+            ]
+        )
 
         X_features = self.feature_union.fit_transform(X_text)
         self.model = LinearSVC(
@@ -133,7 +150,9 @@ class JailbreakClassifier:
                 self.feature_union, self.model_output_dir / "feature_union.joblib"
             )
             joblib.dump(self.model, self.model_output_dir / "linear_svm_model.joblib")
-            print(f"Enhanced model (TF-IDF + 8 length features) saved to '{self.model_output_dir}'.")
+            print(
+                f"Enhanced model (TF-IDF + 8 length features) saved to '{self.model_output_dir}'."
+            )
 
     def classify_prompt(self, prompt: str) -> str:
         if not self.model or not self.feature_union:
@@ -149,7 +168,7 @@ class JailbreakClassifier:
     def train(self):
         if not self.json_file_path:
             raise ValueError("json_file_path must be provided for training.")
-        with open(self.json_file_path, "r", encoding="utf-8") as f:
+        with open(self.json_file_path, encoding="utf-8") as f:
             data = json.load(f)
 
         df = pd.DataFrame(data)
@@ -177,10 +196,12 @@ class JailbreakClassifier:
             X_temp, y_temp, test_size=0.5, random_state=42, stratify=y_temp
         )
 
-        feature_union = FeatureUnion([
-            ('tfidf', TfidfVectorizer(max_features=17000, ngram_range=(1, 2))),
-            ('length_features', FunctionTransformer(length_complexity_features))
-        ])
+        feature_union = FeatureUnion(
+            [
+                ("tfidf", TfidfVectorizer(max_features=17000, ngram_range=(1, 2))),
+                ("length_features", FunctionTransformer(length_complexity_features)),
+            ]
+        )
         X_train_features = feature_union.fit_transform(X_train)
         model = LinearSVC(
             C=1.0, class_weight="balanced", max_iter=2000, random_state=42
@@ -198,10 +219,12 @@ class JailbreakClassifier:
         print(classification_report(y_test, y_pred))
         print("--------------------------------------------\n")
 
-        self.feature_union = FeatureUnion([
-            ('tfidf', TfidfVectorizer(max_features=17000, ngram_range=(1, 2))),
-            ('length_features', FunctionTransformer(length_complexity_features))
-        ])
+        self.feature_union = FeatureUnion(
+            [
+                ("tfidf", TfidfVectorizer(max_features=17000, ngram_range=(1, 2))),
+                ("length_features", FunctionTransformer(length_complexity_features)),
+            ]
+        )
         X_full_features = self.feature_union.fit_transform(X)
         self.model = LinearSVC(
             C=1.0, class_weight="balanced", max_iter=2000, random_state=42

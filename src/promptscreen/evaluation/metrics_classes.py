@@ -1,8 +1,9 @@
-import json, os
-from typing import List, Dict, Any, Optional
-from dataclasses import dataclass, asdict
-from datetime import datetime
+import json
 import statistics
+from dataclasses import asdict, dataclass
+from datetime import datetime
+from typing import Any, Optional, cast
+
 from ..utils.query_agent import QueryAgent
 
 
@@ -87,26 +88,24 @@ class AttackEvaluator:
             guardrail_bypass=False,
         )
 
-    def _safe_json_loads(self, text: str) -> Dict[str, Any]:
+    def _safe_json_loads(self, text: str) -> dict[str, Any]:
         """
         Parses LLM output to extract JSON
         """
         text = text.strip()
         if text.startswith("```"):
-            fence_end = text.find(
-                "```", 3
-            )  # looks for the closing backticks starting after position 3
+            fence_end = text.find("```", 3)
             if fence_end != -1:
                 text = text[3:fence_end]
             text = text.replace("```json", "", 1).strip()
 
         try:
-            return json.loads(text)
+            return cast(dict[str, Any], json.loads(text))
         except json.JSONDecodeError:
             # manually start looking for brackets in case output is still not in desired format
             first_brace = text.find("{")
             if first_brace == -1:
-                raise json.JSONDecodeError("No JSON found", text, 0)
+                raise json.JSONDecodeError("No JSON found", text, 0) from None
 
             brace_count = 0
             for i, char in enumerate(text[first_brace:], first_brace):
@@ -115,25 +114,28 @@ class AttackEvaluator:
                 elif char == "}":
                     brace_count -= 1
                     if brace_count == 0:
-                        return json.loads(
-                            text[first_brace : i + 1]
-                        )  # returns python dictionary from json input
+                        return cast(
+                            dict[str, Any],
+                            json.loads(text[first_brace : i + 1]),
+                        )
 
-            raise json.JSONDecodeError("Invalid JSON structure", text, first_brace)
+            raise json.JSONDecodeError(
+                "Invalid JSON structure", text, first_brace
+            ) from None
 
 
 class MetricsCalculator:
     def __init__(self):
         # list of AttackResults as member variable
-        self.attack_results: List[AttackResult] = []
+        self.attack_results: list[AttackResult] = []
 
     def add_result(self, attack_result: AttackResult) -> None:
         self.attack_results.append(attack_result)
 
-    def calculate_asr(self) -> Dict[str, Any]:
+    def calculate_asr(self) -> dict[str, Any]:
         """Calculate Attack Success Rate metrics"""
         if not self.attack_results:
-            return {"error": "No results to calculate"}
+            return cast(dict[str, Any], {"error": "No results to calculate"})
 
         # Separate blocked attacks from actual attempts
         blocked_attacks = [r for r in self.attack_results if r.attack_type == "blocked"]
@@ -146,40 +148,44 @@ class MetricsCalculator:
         total_attempted = len(attempted_attacks)
 
         # ASR should be calculated on attempted attacks only
-        asr = successful_attacks / total_attempted if total_attempted else 0.0
+        asr = float(successful_attacks / total_attempted if total_attempted else 0.0)
 
-        return {
+        stats_dict: dict[str, Any] = {
             "overall_asr": asr,
             "success_percentage": asr * 100.0,
-            "successful_attacks": successful_attacks,
-            "total_attempts": total_attempts,
-            "attempted_attacks": total_attempted,
-            "blocked_attacks": len(blocked_attacks),
+            "successful_attacks": int(successful_attacks),
+            "total_attempts": int(total_attempts),
+            "attempted_attacks": int(total_attempted),
+            "blocked_attacks": int(len(blocked_attacks)),
         }
+        return cast(dict[str, Any], stats_dict)
 
-    def calculate_time_to_classify(self) -> Dict[str, Any]:
+    def calculate_time_to_classify(self) -> dict[str, Any]:
         """Calculate time-to-classify metrics similar to metrics.py"""
         successful_attacks = [r for r in self.attack_results if r.success]
         if not successful_attacks:
-            return {"error": "No successful attacks to calculate time metrics"}
+            return cast(
+                dict[str, Any],
+                {"error": "No successful attacks to calculate time metrics"},
+            )
 
         classification_times = [r.classification_time for r in successful_attacks]
-        return {
-            "average_time_to_classify": statistics.mean(classification_times),
-            "median_time_to_classify": statistics.median(classification_times),
-            "min_time": min(classification_times),
-            "max_time": max(classification_times),
-            "std_deviation": (
+        time_stats: dict[str, Any] = {
+            "average_time_to_classify": float(statistics.mean(classification_times)),
+            "median_time_to_classify": float(statistics.median(classification_times)),
+            "min_time": float(min(classification_times)),
+            "max_time": float(max(classification_times)),
+            "std_deviation": float(
                 statistics.stdev(classification_times)
                 if len(classification_times) > 1
                 else 0.0
             ),
-            "successful_attempts": len(successful_attacks),
-            "total_classification_time": sum(classification_times),
+            "successful_attempts": int(len(successful_attacks)),
+            "total_classification_time": float(sum(classification_times)),
         }
+        return cast(dict[str, Any], time_stats)
 
-    def generate_report(self, asr_metrics: Dict, time_metrics: Dict) -> str:
-
+    def generate_report(self, asr_metrics: dict, time_metrics: dict) -> str:
         report = f"""
 === LLM Attack Simulation Report ===
 Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
@@ -205,7 +211,7 @@ TIME-TO-CLASSIFY METRICS:
             return o.isoformat()
         raise TypeError(f"Object of type {type(o).__name__} is not JSON serializable")
 
-    def save_results_to_json(self, filename: str = None) -> str:
+    def save_results_to_json(self, filename: Optional[str] = None) -> str:
         """Save all results to JSON file"""
         if filename is None:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -282,7 +288,3 @@ TIME-TO-CLASSIFY METRICS:
             print("- No successful attacks to calculate time metrics")
 
         print("=" * 60)
-
-
-
-

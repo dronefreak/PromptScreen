@@ -5,6 +5,7 @@ from typing import override
 from defence.abstract_defence import AbstractDefence
 from defence.ds.analysis_result import AnalysisResult
 
+
 class HeuristicVectorAnalyzer(AbstractDefence):
     def __init__(self, threshold: int, pm_shot_lim: int):
         self.threshold: int = threshold

@@ -1,21 +1,22 @@
 import json
-import pandas as pd
 import string
-import emoji
-import nltk
 from pathlib import Path
-import joblib
-import numpy as np
+from typing import Optional, cast
 
-from nltk.corpus import wordnet, stopwords
-from nltk.stem import WordNetLemmatizer
+import emoji
+import joblib
+import nltk
+import numpy as np
+import pandas as pd
 from nltk import pos_tag, word_tokenize
+from nltk.corpus import stopwords, wordnet
+from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
-from sklearn.svm import LinearSVC
+from sklearn.model_selection import train_test_split
 from sklearn.pipeline import FeatureUnion
 from sklearn.preprocessing import FunctionTransformer
+from sklearn.svm import LinearSVC
 
 _ = nltk.download("wordnet")
 _ = nltk.download("stopwords")
@@ -25,13 +26,13 @@ _ = nltk.download("punkt_tab")
 
 
 class TextPreProcessor:
-    def __init__(self, custom_stopwords=None):
+    def __init__(self, custom_stopwords: Optional[set] = None):
         self.lemmatizer = WordNetLemmatizer()
         self.stop_words = set(stopwords.words("english"))
         if custom_stopwords:
             self.stop_words.update(custom_stopwords)
 
-    def _get_wordnet_pos(self, word: str):
+    def _get_wordnet_pos(self, word: str) -> str:
         tag = pos_tag([word])[0][1][0].upper()
         tag_dict = {
             "J": wordnet.ADJ,
@@ -39,7 +40,7 @@ class TextPreProcessor:
             "V": wordnet.VERB,
             "R": wordnet.ADV,
         }
-        return tag_dict.get(tag, wordnet.NOUN)
+        return cast(str, tag_dict.get(tag, wordnet.NOUN))
 
     def preprocess(self, text: str) -> str:
         text = text.lower()
@@ -63,69 +64,92 @@ class TextPreProcessor:
         return df_copy
 
 
-def length_complexity_features(texts):
+def length_complexity_features(texts: list[str]) -> np.ndarray:
     features = []
-    attack_keywords = {"ignore", "system", "prompt", "act", "as", "instruction", "follow", "previous"}
+    attack_keywords = {
+        "ignore",
+        "system",
+        "prompt",
+        "act",
+        "as",
+        "instruction",
+        "follow",
+        "previous",
+    }
     for text in texts:
         char_len = len(text)
         word_len = len(text.split())
-        char_no_space = len(text.replace(' ', ''))
+        char_no_space = len(text.replace(" ", ""))
 
         words = text.split()
         if word_len > 0:
             avg_word_len = np.mean([len(w) for w in words])
-            punct_ratio = text.count('.') / char_len if char_len > 0 else 0
+            punct_ratio = text.count(".") / char_len if char_len > 0 else 0
             attack_density = sum(1 for w in words if w in attack_keywords) / word_len
-            repetition_score = max([words.count(w) for w in set(words)]) / word_len if word_len > 0 else 0
+            repetition_score = (
+                max([words.count(w) for w in set(words)]) / word_len
+                if word_len > 0
+                else 0
+            )
         else:
             avg_word_len = 0
             punct_ratio = 0
             attack_density = 0
             repetition_score = 0
 
-        features.append([
-            char_len / 1000,
-            word_len / 100,
-            char_no_space / 1000,
-            avg_word_len,
-            punct_ratio,
-            attack_density,
-            repetition_score,
-            1.0 / (1 + word_len)
-        ])
+        features.append(
+            [
+                char_len / 1000,
+                word_len / 100,
+                char_no_space / 1000,
+                avg_word_len,
+                punct_ratio,
+                attack_density,
+                repetition_score,
+                1.0 / (1 + word_len),
+            ]
+        )
     return np.array(features)
 
 
 class JailbreakClassifier:
-    def __init__(self, json_file_path: str, model_output_dir: str = None):
+    def __init__(self, json_file_path: str, model_output_dir: Optional[str] = None):
         self.json_file_path = json_file_path
         self.model_output_dir = Path(model_output_dir) if model_output_dir else None
         self.preprocessor = TextPreProcessor()
-        self.feature_union = None
-        self.model = None
-        self.df = None
+
+        self.feature_union: Optional[FeatureUnion] = None
+        self.model: Optional[LinearSVC] = None
+        self.df: Optional[pd.DataFrame] = None
 
     def _load_and_preprocess_data(self):
-        with open(self.json_file_path, "r", encoding="utf-8") as f:
+        with open(self.json_file_path, encoding="utf-8") as f:
             data = json.load(f)
 
         self.df = pd.DataFrame(data)
         self.df = self.preprocessor.preprocess_df(self.df, "prompt")
 
-    def _train_model(self):
+    def _train_model(self) -> None:
+        if self.df is None:
+            self._load_and_preprocess_data()
+
+        assert self.df is not None
         X_text = self.df["clean_prompt"].fillna("")
         y = self.df["classification"]
 
-        self.feature_union = FeatureUnion([
-            ('tfidf', TfidfVectorizer(max_features=17000, ngram_range=(1, 2))),
-            ('length_features', FunctionTransformer(length_complexity_features))
-        ])
-
-        X_features = self.feature_union.fit_transform(X_text)
-        self.model = LinearSVC(
-            C=1.0, class_weight="balanced", max_iter=2000, random_state=42
+        union = FeatureUnion(
+            [
+                ("tfidf", TfidfVectorizer(max_features=17000, ngram_range=(1, 2))),
+                ("length_features", FunctionTransformer(length_complexity_features)),
+            ]
         )
-        self.model.fit(X_features, y)
+
+        X_features = union.fit_transform(X_text)
+        svc = LinearSVC(C=1.0, class_weight="balanced", max_iter=2000, random_state=42)
+        svc.fit(X_features, y)
+
+        self.feature_union = union
+        self.model = svc
 
         if self.model_output_dir:
             self.model_output_dir.mkdir(parents=True, exist_ok=True)
@@ -133,10 +157,12 @@ class JailbreakClassifier:
                 self.feature_union, self.model_output_dir / "feature_union.joblib"
             )
             joblib.dump(self.model, self.model_output_dir / "linear_svm_model.joblib")
-            print(f"Enhanced model (TF-IDF + 8 length features) saved to '{self.model_output_dir}'.")
+            print(
+                f"Enhanced model (TF-IDF + 8 length features) saved to '{self.model_output_dir}'."
+            )
 
     def classify_prompt(self, prompt: str) -> str:
-        if not self.model or not self.feature_union:
+        if self.model is None or self.feature_union is None:
             raise RuntimeError(
                 "Model is not trained. Please run the train() method first."
             )
@@ -144,12 +170,12 @@ class JailbreakClassifier:
         clean_prompt = self.preprocessor.preprocess(prompt)
         features = self.feature_union.transform([clean_prompt])
         prediction = self.model.predict(features)
-        return prediction[0]
+        return str(prediction[0])
 
-    def train(self):
+    def train(self) -> None:
         if not self.json_file_path:
             raise ValueError("json_file_path must be provided for training.")
-        with open(self.json_file_path, "r", encoding="utf-8") as f:
+        with open(self.json_file_path, encoding="utf-8") as f:
             data = json.load(f)
 
         df = pd.DataFrame(data)
@@ -177,10 +203,12 @@ class JailbreakClassifier:
             X_temp, y_temp, test_size=0.5, random_state=42, stratify=y_temp
         )
 
-        feature_union = FeatureUnion([
-            ('tfidf', TfidfVectorizer(max_features=17000, ngram_range=(1, 2))),
-            ('length_features', FunctionTransformer(length_complexity_features))
-        ])
+        feature_union = FeatureUnion(
+            [
+                ("tfidf", TfidfVectorizer(max_features=17000, ngram_range=(1, 2))),
+                ("length_features", FunctionTransformer(length_complexity_features)),
+            ]
+        )
         X_train_features = feature_union.fit_transform(X_train)
         model = LinearSVC(
             C=1.0, class_weight="balanced", max_iter=2000, random_state=42
@@ -198,10 +226,12 @@ class JailbreakClassifier:
         print(classification_report(y_test, y_pred))
         print("--------------------------------------------\n")
 
-        self.feature_union = FeatureUnion([
-            ('tfidf', TfidfVectorizer(max_features=17000, ngram_range=(1, 2))),
-            ('length_features', FunctionTransformer(length_complexity_features))
-        ])
+        self.feature_union = FeatureUnion(
+            [
+                ("tfidf", TfidfVectorizer(max_features=17000, ngram_range=(1, 2))),
+                ("length_features", FunctionTransformer(length_complexity_features)),
+            ]
+        )
         X_full_features = self.feature_union.fit_transform(X)
         self.model = LinearSVC(
             C=1.0, class_weight="balanced", max_iter=2000, random_state=42

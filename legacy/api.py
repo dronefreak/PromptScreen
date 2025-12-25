@@ -4,7 +4,6 @@ from defence.abstract_defence import AbstractDefence
 
 
 def create_app(guards: dict[str, AbstractDefence]) -> FastAPI:
-
     class EvaluationRequest(BaseModel):
         prompt: str
         defences: list[str]
@@ -58,9 +57,7 @@ def create_app(guards: dict[str, AbstractDefence]) -> FastAPI:
 
                 if not is_safe:
                     return {
-                        defence_name: DefenceResult(
-                            is_safe=is_safe, details=details
-                        )
+                        defence_name: DefenceResult(is_safe=is_safe, details=details)
                     }
 
             return {

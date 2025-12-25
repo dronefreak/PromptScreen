@@ -7,6 +7,7 @@ from omegaconf import DictConfig, OmegaConf
 from defence.abstract_defence import AbstractDefence
 from defence.train.train_classifier import JailbreakClassifier
 
+
 def calculate_and_write_metrics(
     data: list[dict[str, Any]],
     guard: AbstractDefence,
@@ -41,6 +42,7 @@ def calculate_and_write_metrics(
     _ = output_file.write(f"Negative Predictive Value: {npv:.4f}\n")
     _ = output_file.write(f"Accuracy: {accuracy:.4f}\n\n")
 
+
 def run_suite(cfg: DictConfig, guards: dict) -> None:
     if "shieldgemma" in cfg.active_defences and not cfg.huggingface_token:
         raise ValueError(
@@ -48,7 +50,7 @@ def run_suite(cfg: DictConfig, guards: dict) -> None:
             "Please set it in your environment, config file, or pass as a param"
         )
 
-    with open(cfg.input_file, "r") as fh_in:
+    with open(cfg.input_file) as fh_in:
         data_to_process: list[dict] = json.load(fh_in)
 
     open(cfg.output_file, "w").close()

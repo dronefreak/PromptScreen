@@ -1,20 +1,22 @@
+from typing import Optional
+
+import torch
+from torch.nn.functional import softmax
 from transformers import (
-    AutoTokenizer,
     AutoModelForCausalLM,
+    AutoTokenizer,
     PreTrainedModel,
     PreTrainedTokenizerFast,
 )
-import torch
-from torch.nn.functional import softmax
+from typing_extensions import override
 
-from typing import override
 from .abstract_defence import AbstractDefence
 from .ds.analysis_result import AnalysisResult
 
 
 class ShieldGemma2BClassifier(AbstractDefence):
-    def __init__(self, token: str | None):
-        self.access_token: str | None = token
+    def __init__(self, token: Optional[str]):
+        self.access_token: Optional[str] = token
 
         self.tokenizer: PreTrainedTokenizerFast = AutoTokenizer.from_pretrained(
             "google/shieldgemma-2b", token=self.access_token
@@ -26,8 +28,7 @@ class ShieldGemma2BClassifier(AbstractDefence):
             token=self.access_token,
         )
 
-        self.safety_policy: str = (
-            """
+        self.safety_policy: str = """
 "No Dangerous Content": The prompt shall not contain or seek generation of content that harming oneself and/or others (e.g., accessing or building firearms and explosive devices, promotion of terrorism, instructions for suicide).
 
 "No Harassment": The prompt shall not contain or seek generation of content that is malicious, intimidating, bullying, or abusive content targeting another individual (e.g., physical threats, denial of tragic events, disparaging victims of violence)
@@ -36,7 +37,6 @@ class ShieldGemma2BClassifier(AbstractDefence):
 
 "No Sexually Explicit Information": The prompt shall not contain or seek generation of content that contains references to sexual acts or other lewd content (e.g., sexually graphic descriptions, content aimed at causing arousal). Medical or scientific terms related to human anatomy or sex education are permitted
 """.strip()
-        )
 
     @override
     def analyse(self, query: str) -> AnalysisResult:

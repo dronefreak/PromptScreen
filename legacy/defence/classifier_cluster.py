@@ -103,4 +103,3 @@ class ClassifierCluster(AbstractDefence):
             "Classification Cluster",
             not (self._is_jailbreak(query) or self._is_toxic(query)),
         )
-

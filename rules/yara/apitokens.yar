@@ -32,7 +32,7 @@ rule ContainsAPIToken
         $slack_webhook = /https:\/\/hooks\\.slack\\.com\/services\/T[a-zA-Z0-9_]{8}\/B[a-zA-Z0-9_]{8}\/[a-zA-Z0-9_]{24}/
 
         $stripe0 = /sk_live_[0-9a-zA-Z]{24}/
-        $stripe1 = /rk_live_[0-9a-zA-Z]{24}/        
+        $stripe1 = /rk_live_[0-9a-zA-Z]{24}/
 
         $square0 = /sqOatp-[0-9A-Za-z\\-_]{22}/
 

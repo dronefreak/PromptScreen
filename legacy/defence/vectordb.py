@@ -8,18 +8,19 @@ from pydantic import BaseModel
 from chromadb.config import Settings
 from chromadb.utils import embedding_functions
 
+
 class VectorDB:
-    def __init__(self, 
-        model: str, 
-        collection: str, 
+    def __init__(
+        self,
+        model: str,
+        collection: str,
         db_dir: str,
-        n_results: int, 
-        openai_key: str | None = None
+        n_results: int,
+        openai_key: str | None = None,
     ):
-        if model == 'openai':
+        if model == "openai":
             self.embed_fn = embedding_functions.OpenAIEmbeddingFunction(
-                api_key=openai_key,
-                model_name='text-embedding-ada-002'
+                api_key=openai_key, model_name="text-embedding-ada-002"
             )
         else:
             self.embed_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
@@ -37,35 +38,27 @@ class VectorDB:
         return self.client.get_or_create_collection(
             name=name,
             embedding_function=self.embed_fn,
-            metadata={'hnsw:space': 'cosine'}
+            metadata={"hnsw:space": "cosine"},
         )
 
     def add_texts(self, texts: list[str], metadatas: list[dict]):
         ids = [str(i) for i in range(len(texts))]
-        self.collection.add(
-            documents=texts,
-            metadatas=metadatas,
-            ids=ids
-        )
+        self.collection.add(documents=texts, metadatas=metadatas, ids=ids)
 
-    def add_embeddings(self, texts: list[str], embeddings: list[list], metadatas: list[dict]):
+    def add_embeddings(
+        self, texts: list[str], embeddings: list[list], metadatas: list[dict]
+    ):
         ids = [str(i) for i in range(len(texts))]
         self.collection.add(
-            documents=texts,
-            embeddings=embeddings,
-            metadatas=metadatas,
-            ids=ids
+            documents=texts, embeddings=embeddings, metadatas=metadatas, ids=ids
         )
 
     def query(self, text: str):
-        return self.collection.query(
-            query_texts=[text],
-            n_results=self.n_results
-        )
+        return self.collection.query(query_texts=[text], n_results=self.n_results)
 
 
 class VectorMatch(BaseModel):
-    text: str = ''
+    text: str = ""
     metadata: dict | None = {}
     distance: float = 0.0
 
@@ -99,7 +92,9 @@ class VectorDBScanner(AbstractDefence):
                 existing_texts.add(m.text)
 
         if not vulnerabilities:
-            return AnalysisResult(type="No similar threats found in vector database.", is_safe=True)
+            return AnalysisResult(
+                type="No similar threats found in vector database.", is_safe=True
+            )
         else:
             problem_string: str = "\n---\n".join(vulnerabilities)
             return AnalysisResult(type=problem_string, is_safe=False)

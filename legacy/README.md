@@ -7,6 +7,7 @@ This directory contains the original flat-structure code before refactoring.
 ## Use New Structure Instead
 
 All functionality has been moved to `src/promptscreen/`:
+
 - `defence/` → `src/promptscreen/defence/`
 - `pipeline.py` → `src/promptscreen/evaluation/pipeline.py`
 - `guards.py` → `examples/run_*.py`
@@ -18,6 +19,7 @@ See `examples/` directory for usage.
 ## Deletion Plan
 
 This directory will be deleted in v1.0 release after:
+
 - [ ] All examples working
 - [ ] All tests passing
 - [ ] Package installable via pip

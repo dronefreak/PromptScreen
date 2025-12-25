@@ -24,16 +24,21 @@ def initialize_guards(cfg: DictConfig) -> dict[str, AbstractDefence]:
                 n_results=cfg.vectordb.n_results,
             )
 
-            with open(cfg.threat_file, "r") as f:
+            with open(cfg.threat_file) as f:
                 threat_data = json.load(f)
-                known_threats = [entry['prompt'] for entry in threat_data]
-                metadatas = [{'category': entry.get('classification', 'unknown')} for entry in threat_data]
+                known_threats = [entry["prompt"] for entry in threat_data]
+                metadatas = [
+                    {"category": entry.get("classification", "unknown")}
+                    for entry in threat_data
+                ]
 
                 if known_threats:
                     db_client.add_texts(texts=known_threats, metadatas=metadatas)
                     print(f"- VectorDB populated with {len(known_threats)} threats.")
                 else:
-                    print("- Warning: Threat file was found but is empty. VectorDB has no threats.")
+                    print(
+                        "- Warning: Threat file was found but is empty. VectorDB has no threats."
+                    )
 
         except Exception as e:
             print(f"Warning: Could not populate VectorDB. Error: {e}")
@@ -59,10 +64,11 @@ def initialize_guards(cfg: DictConfig) -> dict[str, AbstractDefence]:
             except Exception as e:
                 print(f"An error occurred during training: {e}")
         else:
-            print(f"Skipping training: Model artifacts already exist in '{cfg.model_dir}' and 'train=false'.")
+            print(
+                f"Skipping training: Model artifacts already exist in '{cfg.model_dir}' and 'train=false'."
+            )
 
         print("-" * 20)
-
 
     guard_list = {
         "heuristic": lambda: HeuristicVectorAnalyzer(3, 3),
@@ -70,14 +76,16 @@ def initialize_guards(cfg: DictConfig) -> dict[str, AbstractDefence]:
         "cluster": lambda: ClassifierCluster(),
         "shieldgemma": lambda: ShieldGemma2BClassifier(cfg.huggingface_token),
         "vectordb": lambda: VectorDBScanner(db_client, cfg.vectordb.threshold),
-        "scanner": lambda: Scanner("rules/yara")
+        "scanner": lambda: Scanner("rules/yara"),
     }
 
     initialized_guards = {}
     for name in cfg.active_defences:
         if name in guard_list:
             if name == "vectordb" and db_client is None:
-                print(f"Warning: Skipping 'Vectordb' guard because initialization failed or was skipped.")
+                print(
+                    f"Warning: Skipping 'Vectordb' guard because initialization failed or was skipped."
+                )
                 continue
 
             initialized_guards[name] = guard_list[name]()
@@ -97,16 +105,21 @@ def initialize_all_guards(cfg: DictConfig) -> dict[str, AbstractDefence]:
     )
 
     try:
-        with open(cfg.threat_file, "r") as f:
+        with open(cfg.threat_file) as f:
             threat_data = json.load(f)
-            known_threats = [entry['prompt'] for entry in threat_data]
-            metadatas = [{'category': entry.get('classification', 'unknown')} for entry in threat_data]
+            known_threats = [entry["prompt"] for entry in threat_data]
+            metadatas = [
+                {"category": entry.get("classification", "unknown")}
+                for entry in threat_data
+            ]
 
             if known_threats:
                 db_client.add_texts(texts=known_threats, metadatas=metadatas)
                 print(f"- VectorDB populated with {len(known_threats)} threats.")
             else:
-                print("- Warning: Threat file was found but is empty. VectorDB has no threats.")
+                print(
+                    "- Warning: Threat file was found but is empty. VectorDB has no threats."
+                )
 
     except Exception as e:
         print(f"Warning: Could not populate VectorDB. Error: {e}")
@@ -131,7 +144,9 @@ def initialize_all_guards(cfg: DictConfig) -> dict[str, AbstractDefence]:
         except Exception as e:
             print(f"An error occurred during training: {e}")
     else:
-        print(f"Skipping training: Model artifacts already exist in '{cfg.model_dir}' and 'train=false'.")
+        print(
+            f"Skipping training: Model artifacts already exist in '{cfg.model_dir}' and 'train=false'."
+        )
 
     print("-" * 20)
 
@@ -141,10 +156,12 @@ def initialize_all_guards(cfg: DictConfig) -> dict[str, AbstractDefence]:
         "cluster": lambda: ClassifierCluster(),
         "shieldgemma": lambda: ShieldGemma2BClassifier(cfg.huggingface_token),
         "vectordb": lambda: VectorDBScanner(db_client, cfg.vectordb.threshold),
-        "scanner": lambda: Scanner("rules/yara")
+        "scanner": lambda: Scanner("rules/yara"),
     }
 
-    initialized_guards = {name: constructor() for name, constructor in guard_list.items()}
+    initialized_guards = {
+        name: constructor() for name, constructor in guard_list.items()
+    }
 
     print(f"- All guards initialized: {list(initialized_guards.keys())}")
     return initialized_guards

@@ -1,6 +1,6 @@
 """PromptScreen - Production-ready prompt injection defense for LLMs.
 
-A comprehensive library for defending Large Language Models against 
+A comprehensive library for defending Large Language Models against
 prompt injection and jailbreak attacks.
 """
 
@@ -10,19 +10,20 @@ __version__ = "0.1.0"
 from .defence import (
     AbstractDefence,
     AnalysisResult,
-    HeuristicVectorAnalyzer,
-    JailbreakInferenceAPI,
     ClassifierCluster,
+    HeuristicVectorAnalyzer,
+    InjectionScanner,
+    JailbreakInferenceAPI,
+    PolymorphicPromptAssembler,
+    Scanner,
     ShieldGemma2BClassifier,
     VectorDBScanner,
-    Scanner,
-    InjectionScanner,
-    PolymorphicPromptAssembler,
 )
 
 # Evaluation framework (optional - only if user installs [eval] extras)
 try:
     from .evaluation import AttackEvaluator, MetricsCalculator
+
     _has_evaluation = True
 except ImportError:
     _has_evaluation = False
@@ -32,6 +33,7 @@ except ImportError:
 # API server (optional - only if user installs [api] extras)
 try:
     from .api import create_app
+
     _has_api = True
 except ImportError:
     _has_api = False

@@ -2,10 +2,11 @@
 
 import re
 import unicodedata
+from collections.abc import Iterator
+
+from typing_extensions import override
 
 from .abstract_defence import AbstractDefence
-from collections.abc import Iterator
-from typing import override
 from .ds.analysis_result import AnalysisResult
 
 SENSITIVE_FILES = (

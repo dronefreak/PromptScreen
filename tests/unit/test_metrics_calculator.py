@@ -1,7 +1,8 @@
 """Tests for MetricsCalculator."""
-import pytest
 from datetime import datetime
-from promptscreen.evaluation import MetricsCalculator, AttackResult
+
+import pytest
+from promptscreen.evaluation import AttackResult, MetricsCalculator
 
 
 class TestMetricsCalculator:
@@ -82,7 +83,7 @@ class TestMetricsCalculator:
         """Test ASR when all attacks are blocked."""
         calculator.add_result(blocked_attack)
         calculator.add_result(blocked_attack)
-        
+
         asr = calculator.calculate_asr()
         assert asr["overall_asr"] == 0.0
         assert asr["successful_attacks"] == 0
@@ -99,7 +100,7 @@ class TestMetricsCalculator:
         calculator.add_result(blocked_attack)
 
         asr = calculator.calculate_asr()
-        
+
         # ASR = successful / attempted (not including blocked)
         assert asr["successful_attacks"] == 1
         assert asr["attempted_attacks"] == 2  # Only non-blocked
@@ -118,7 +119,7 @@ class TestMetricsCalculator:
     def test_calculate_time_metrics_no_successful(self, calculator, failed_attack):
         """Test time metrics with no successful attacks."""
         calculator.add_result(failed_attack)
-        
+
         time_metrics = calculator.calculate_time_to_classify()
         assert "error" in time_metrics
 

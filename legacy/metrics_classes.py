@@ -87,7 +87,7 @@ class AttackEvaluator:
             guardrail_bypass=False,
         )
 
-    def _safe_json_loads(self, text: str) -> Dict[str, Any]:
+    def _safe_json_loads(self, text: str) -> dict[str, Any]:
         """
         Parses LLM output to extract JSON
         """
@@ -125,12 +125,12 @@ class AttackEvaluator:
 class MetricsCalculator:
     def __init__(self):
         # list of AttackResults as member variable
-        self.attack_results: List[AttackResult] = []
+        self.attack_results: list[AttackResult] = []
 
     def add_result(self, attack_result: AttackResult) -> None:
         self.attack_results.append(attack_result)
 
-    def calculate_asr(self) -> Dict[str, Any]:
+    def calculate_asr(self) -> dict[str, Any]:
         """Calculate Attack Success Rate metrics"""
         if not self.attack_results:
             return {"error": "No results to calculate"}
@@ -157,7 +157,7 @@ class MetricsCalculator:
             "blocked_attacks": len(blocked_attacks),
         }
 
-    def calculate_time_to_classify(self) -> Dict[str, Any]:
+    def calculate_time_to_classify(self) -> dict[str, Any]:
         """Calculate time-to-classify metrics similar to metrics.py"""
         successful_attacks = [r for r in self.attack_results if r.success]
         if not successful_attacks:
@@ -178,8 +178,7 @@ class MetricsCalculator:
             "total_classification_time": sum(classification_times),
         }
 
-    def generate_report(self, asr_metrics: Dict, time_metrics: Dict) -> str:
-
+    def generate_report(self, asr_metrics: dict, time_metrics: dict) -> str:
         report = f"""
 === LLM Attack Simulation Report ===
 Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
@@ -282,7 +281,3 @@ TIME-TO-CLASSIFY METRICS:
             print("- No successful attacks to calculate time metrics")
 
         print("=" * 60)
-
-
-
-

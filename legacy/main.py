@@ -11,7 +11,6 @@ from api import create_app
 
 @hydra.main(version_base=None, config_path="conf", config_name="config")
 def main(cfg: DictConfig) -> None:
-
     if cfg.mode == "api":
         guards = initialize_all_guards(cfg)
         print(f"Starting API server at http://{cfg.api.host}:{cfg.api.port}")
@@ -29,7 +28,9 @@ def main(cfg: DictConfig) -> None:
         evaluate(cfg, guards)
 
     else:
-        print(f"Error: Unknown mode '{cfg.mode}'. Please use 'api', 'stats' or 'pipeline'.")
+        print(
+            f"Error: Unknown mode '{cfg.mode}'. Please use 'api', 'stats' or 'pipeline'."
+        )
 
 
 if __name__ == "__main__":

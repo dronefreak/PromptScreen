@@ -1,9 +1,12 @@
 # https://arxiv.org/pdf/2506.06384
 # Potential false positives, uncertain on how to correct
 import re
-from typing import override
+
+from typing_extensions import override
+
 from .abstract_defence import AbstractDefence
 from .ds.analysis_result import AnalysisResult
+
 
 class HeuristicVectorAnalyzer(AbstractDefence):
     def __init__(self, threshold: int, pm_shot_lim: int):
