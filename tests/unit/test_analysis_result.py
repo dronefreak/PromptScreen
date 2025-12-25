@@ -1,5 +1,5 @@
 """Tests for AnalysisResult dataclass."""
-import pytest
+
 from promptscreen.defence.ds.analysis_result import AnalysisResult
 
 

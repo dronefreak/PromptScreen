@@ -1,6 +1,8 @@
 """Tests for SVM-based JailbreakInferenceAPI guard."""
-import pytest
+
 from pathlib import Path
+
+import pytest
 from promptscreen.defence import JailbreakInferenceAPI
 
 
@@ -13,7 +15,7 @@ class TestJailbreakInferenceAPI:
         model_dir = "model_artifacts"
         if not Path(model_dir).exists():
             pytest.skip("Model artifacts not found - run training first")
-        
+
         try:
             return JailbreakInferenceAPI(model_dir)
         except FileNotFoundError:

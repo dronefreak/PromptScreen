@@ -1,8 +1,8 @@
 """Evaluation framework for measuring guard effectiveness."""
 
-from .metrics_classes import AttackEvaluator, MetricsCalculator, AttackResult
-from .pipeline import evaluate
 from .ds_metrics import run_suite
+from .metrics_classes import AttackEvaluator, AttackResult, MetricsCalculator
+from .pipeline import evaluate
 
 __all__ = [
     "AttackEvaluator",

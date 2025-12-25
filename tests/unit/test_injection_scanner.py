@@ -1,4 +1,5 @@
 """Tests for InjectionScanner guard."""
+
 import pytest
 from promptscreen.defence import InjectionScanner
 
@@ -27,7 +28,10 @@ class TestInjectionScanner:
         for prompt in prompts:
             result = guard.analyse(prompt)
             assert result.get_verdict() is False, f"Should block: {prompt}"
-            assert "DNS" in result.get_type() or "exfiltration" in result.get_type().lower()
+            assert (
+                "DNS" in result.get_type()
+                or "exfiltration" in result.get_type().lower()
+            )
 
     def test_detects_markdown_exfiltration(self, guard):
         """Test detection of markdown image exfiltration."""
@@ -38,7 +42,10 @@ class TestInjectionScanner:
         for prompt in prompts:
             result = guard.analyse(prompt)
             assert result.get_verdict() is False, f"Should block: {prompt}"
-            assert "Markdown" in result.get_type() or "exfiltration" in result.get_type().lower()
+            assert (
+                "Markdown" in result.get_type()
+                or "exfiltration" in result.get_type().lower()
+            )
 
     def test_allows_normal_markdown_without_url(self, guard):
         """Test that normal markdown without URLs is allowed."""

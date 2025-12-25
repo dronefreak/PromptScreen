@@ -1,16 +1,16 @@
 import torch
 from torch.types import Number, Tensor
-from .ds.analysis_result import AnalysisResult
 from transformers import (
-    AutoTokenizer,
     AutoModelForSequenceClassification,
+    AutoTokenizer,
     BatchEncoding,
-    PreTrainedTokenizerFast,
     PreTrainedModel,
+    PreTrainedTokenizerFast,
 )
+from typing_extensions import override
 
-from typing import override
 from .abstract_defence import AbstractDefence
+from .ds.analysis_result import AnalysisResult
 
 
 class ClassifierCluster(AbstractDefence):
@@ -103,4 +103,3 @@ class ClassifierCluster(AbstractDefence):
             "Classification Cluster",
             not (self._is_jailbreak(query) or self._is_toxic(query)),
         )
-

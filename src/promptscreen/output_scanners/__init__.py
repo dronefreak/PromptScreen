@@ -1,5 +1,11 @@
 """Output scanning for LLM responses."""
 
-from .scan import OutputScanner
+try:
+    from .scan import OutputScanner
+
+    _has_output_scanner = True
+except ImportError:
+    OutputScanner = None  # type: ignore
+    _has_output_scanner = False
 
 __all__ = ["OutputScanner"]

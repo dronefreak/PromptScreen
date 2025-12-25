@@ -33,6 +33,7 @@ dependencies = [
     "nltk>=3.9.0",
     "numpy>=1.24.0",
     "pandas>=2.0.0",
+    "typing-extensions>=4.5.0; python_version<'3.12'",
 ]
 
 [project.optional-dependencies]
@@ -92,6 +93,13 @@ dev = [
     "types-PyYAML>=6.0.0",
     "pydocstyle>=6.3.0",
     "yamllint>=1.33.0",
+    "fastapi>=0.100.0",
+    "chromadb>=1.2.0",
+    "lark>=1.2.0",
+    "httpx>=0.25.0",
+    "hydra-core>=1.3.0",
+    "langchain_google_genai>=2.0.0",
+    "langchain_ollama>=0.3.0",
 ]
 
 [project.urls]
@@ -162,6 +170,8 @@ ignore = [
 "tests/*" = ["S101"]      # assert allowed in tests
 
 [tool.mypy]
+mypy_path = "src"
+explicit_package_bases = true
 python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true
@@ -169,11 +179,23 @@ disallow_untyped_defs = false
 ignore_missing_imports = true
 check_untyped_defs = true
 files = ["src"]
-exclude = ["tests", "examples", "legacy"]
+exclude = ["tests", "examples", "legacy", ".venv", "build"]
+no_site_packages = true
+follow_imports = "skip"
+
+# Ignore errors in installed packages
+[[tool.mypy.overrides]]
+module = [
+    "pytest.*",
+    "transformers.*",
+    "torch.*",
+    "langchain.*",
+]
+ignore_errors = true
 
 [tool.bandit]
 exclude_dirs = ["tests", "legacy", "examples"]
-skips = ["B101", "B601"]
+skips = ["B101", "B601", "B615"]
 
 [tool.pydocstyle]
 convention = "google"

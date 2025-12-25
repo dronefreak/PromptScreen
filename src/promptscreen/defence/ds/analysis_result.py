@@ -1,4 +1,4 @@
-class AnalysisResult():
+class AnalysisResult:
     def __init__(self, type: str, is_safe: bool):
         self.type: str = type
         self.is_safe: bool = is_safe

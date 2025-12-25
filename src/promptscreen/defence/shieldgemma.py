@@ -1,20 +1,22 @@
+from typing import Optional
+
+import torch
+from torch.nn.functional import softmax
 from transformers import (
-    AutoTokenizer,
     AutoModelForCausalLM,
+    AutoTokenizer,
     PreTrainedModel,
     PreTrainedTokenizerFast,
 )
-import torch
-from torch.nn.functional import softmax
+from typing_extensions import override
 
-from typing import override
 from .abstract_defence import AbstractDefence
 from .ds.analysis_result import AnalysisResult
 
 
 class ShieldGemma2BClassifier(AbstractDefence):
-    def __init__(self, token: str | None):
-        self.access_token: str | None = token
+    def __init__(self, token: Optional[str]):
+        self.access_token: Optional[str] = token
 
         self.tokenizer: PreTrainedTokenizerFast = AutoTokenizer.from_pretrained(
             "google/shieldgemma-2b", token=self.access_token
@@ -38,7 +40,7 @@ class ShieldGemma2BClassifier(AbstractDefence):
 """.strip()
         )
 
-    @override
+    @override  # type: ignore[misc]
     def analyse(self, query: str) -> AnalysisResult:
         chat = [{"role": "user", "content": query}]
 

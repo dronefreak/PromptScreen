@@ -1,5 +1,5 @@
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 
 class OutputScanner:
@@ -7,11 +7,17 @@ class OutputScanner:
         self.rejection_model_name = "protectai/distilroberta-base-rejection-v1"
         self.bias_model_name = "valurank/distilroberta-bias"
 
-        self.rejection_tokenizer = AutoTokenizer.from_pretrained(self.rejection_model_name)
-        self.rejection_model = AutoModelForSequenceClassification.from_pretrained(self.rejection_model_name)
+        self.rejection_tokenizer = AutoTokenizer.from_pretrained(
+            self.rejection_model_name
+        )
+        self.rejection_model = AutoModelForSequenceClassification.from_pretrained(
+            self.rejection_model_name
+        )
 
         self.bias_tokenizer = AutoTokenizer.from_pretrained(self.bias_model_name)
-        self.bias_model = AutoModelForSequenceClassification.from_pretrained(self.bias_model_name)
+        self.bias_model = AutoModelForSequenceClassification.from_pretrained(
+            self.bias_model_name
+        )
 
         self.max_tokens_rejection = self.rejection_tokenizer.model_max_length
         self.max_tokens_bias = self.bias_tokenizer.model_max_length
