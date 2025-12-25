@@ -41,7 +41,7 @@ pip install -e ".[dev]"
 ```bash
 # After release, install directly from PyPI
 pip install promptscreen
-pip install promptscreen[ml]   # With ML guards
+pip install -e ".[ml]"   # With ML guards
 pip install promptscreen[all]  # Everything
 ```
 
@@ -405,7 +405,7 @@ scanner = VectorDBScanner(db, threshold=0.3)
 **Installation:**
 
 ```bash
-pip install promptscreen[ml]
+pip install -e ".[ml]"
 ```
 
 **Parameters:**
@@ -431,7 +431,7 @@ ClassifierCluster()  # Downloads models on first use (~2GB)
 **Installation:**
 
 ```bash
-pip install promptscreen[ml]
+pip install -e ".[ml]"
 ```
 
 **Parameters:**
