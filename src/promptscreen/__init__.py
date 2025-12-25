@@ -6,19 +6,28 @@ prompt injection and jailbreak attacks.
 
 __version__ = "0.1.0"
 
-# Core defence classes
+# Core defence classes (always available)
 from .defence import (
     AbstractDefence,
     AnalysisResult,
-    ClassifierCluster,
     HeuristicVectorAnalyzer,
     InjectionScanner,
     JailbreakInferenceAPI,
     PolymorphicPromptAssembler,
     Scanner,
-    ShieldGemma2BClassifier,
+    VectorDB,
     VectorDBScanner,
 )
+
+# Optional ML guards (require torch/transformers)
+try:
+    from .defence import ClassifierCluster, ShieldGemma2BClassifier
+
+    _has_ml = True
+except (ImportError, AttributeError):
+    ClassifierCluster = None  # type: ignore
+    ShieldGemma2BClassifier = None  # type: ignore
+    _has_ml = False
 
 # Evaluation framework (optional - only if user installs [eval] extras)
 try:
@@ -44,13 +53,14 @@ __all__ = [
     "AbstractDefence",
     "AnalysisResult",
     "HeuristicVectorAnalyzer",
+    "InjectionScanner",
     "JailbreakInferenceAPI",
+    "PolymorphicPromptAssembler",
+    "Scanner",
+    "VectorDB",
+    "VectorDBScanner",
     "ClassifierCluster",
     "ShieldGemma2BClassifier",
-    "VectorDBScanner",
-    "Scanner",
-    "InjectionScanner",
-    "PolymorphicPromptAssembler",
     "AttackEvaluator",
     "MetricsCalculator",
     "create_app",

@@ -4,16 +4,23 @@ import time
 from omegaconf import DictConfig
 
 from ..defence.abstract_defence import AbstractDefence
-from ..output_scanners.scan import OutputScanner
 from ..utils.query_agent import QueryAgent
 from .metrics_classes import AttackEvaluator, MetricsCalculator
+
+try:
+    from ..output_scanners.scan import OutputScanner
+
+    _has_output_scanner = True
+except ImportError:
+    OutputScanner = None  # type: ignore
+    _has_output_scanner = False
 
 
 def evaluate(cfg: DictConfig, guards: dict[str, AbstractDefence]) -> None:
     query_agent = QueryAgent("gpt-oss:20b")
     evaluator = AttackEvaluator("gpt-oss:20b", 0.1)
     metrics_calc = MetricsCalculator()
-    scanner = OutputScanner()
+    scanner = OutputScanner() if OutputScanner is not None else None
 
     print(f"Starting Pipeline Evaluation with {len(guards)} active defences...")
 
@@ -43,7 +50,9 @@ def evaluate(cfg: DictConfig, guards: dict[str, AbstractDefence]) -> None:
 
         else:
             response = query_agent.query(prompt)
-            response = scanner.scan_output(response)
+            response = (
+                scanner.scan_output(response) if scanner is not None else response
+            )
             attack_result = evaluator.evaluate(end_time - start_time, response, prompt)
             metrics_calc.add_result(attack_result)
         count += 1
