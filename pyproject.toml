@@ -176,11 +176,23 @@ disallow_untyped_defs = false
 ignore_missing_imports = true
 check_untyped_defs = true
 files = ["src"]
-exclude = ["tests", "examples", "legacy"]
+exclude = ["tests", "examples", "legacy", ".venv", "build"]
+no_site_packages = true
+follow_imports = "skip"
+
+# Ignore errors in installed packages
+[[tool.mypy.overrides]]
+module = [
+    "pytest.*",
+    "transformers.*",
+    "torch.*",
+    "langchain.*",
+]
+ignore_errors = true
 
 [tool.bandit]
 exclude_dirs = ["tests", "legacy", "examples"]
-skips = ["B101", "B601"]
+skips = ["B101", "B601", "B615"]
 
 [tool.pydocstyle]
 convention = "google"

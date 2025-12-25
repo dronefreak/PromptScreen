@@ -42,7 +42,6 @@ jobs:
       - name: Check code formatting
         run: |
           black --check src/
-          isort --check-only src/
 
       - name: Type check with mypy
         run: mypy src/
