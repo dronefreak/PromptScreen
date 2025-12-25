@@ -33,6 +33,7 @@ dependencies = [
     "nltk>=3.9.0",
     "numpy>=1.24.0",
     "pandas>=2.0.0",
+    "typing-extensions>=4.5.0; python_version<'3.12'",
 ]
 
 [project.optional-dependencies]
