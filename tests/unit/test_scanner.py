@@ -1,4 +1,5 @@
 """Tests for YARA Scanner guard."""
+
 import pytest
 from promptscreen.defence import Scanner
 

@@ -1,4 +1,5 @@
 """Tests for AnalysisResult dataclass."""
+
 from promptscreen.defence.ds.analysis_result import AnalysisResult
 
 

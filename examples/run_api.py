@@ -2,6 +2,7 @@
 
 This starts an API server that allows testing guards via HTTP requests.
 """
+
 import sys
 
 import hydra

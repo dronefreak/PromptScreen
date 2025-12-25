@@ -1,4 +1,5 @@
 """Tests for SVM-based JailbreakInferenceAPI guard."""
+
 from pathlib import Path
 
 import pytest

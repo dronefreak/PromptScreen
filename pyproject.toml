@@ -170,6 +170,8 @@ ignore = [
 "tests/*" = ["S101"]      # assert allowed in tests
 
 [tool.mypy]
+mypy_path = "src"
+explicit_package_bases = true
 python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true

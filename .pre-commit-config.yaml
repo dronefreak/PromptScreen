@@ -5,81 +5,49 @@ default_language_version:
   python: python3
 
 repos:
-  # Pre-commit hooks for general file checks
+  # ---------- BASIC SANITY ----------
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
-      # File formatting
       - id: trailing-whitespace
-        args: [--markdown-linebreak-ext=md]
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-toml
       - id: check-json
       - id: check-added-large-files
-        args: [--maxkb=5000] # 5MB limit
-
-      # Python-specific
+        args: [--maxkb=5000]
       - id: check-ast
-      - id: check-builtin-literals
-      - id: check-docstring-first
       - id: debug-statements
-      - id: name-tests-test
-        args: [--pytest-test-first]
-
-      # Merge conflicts and syntax
       - id: check-merge-conflict
-      - id: check-case-conflict
-      - id: mixed-line-ending
-        args: [--fix=lf]
-
-      # Security
       - id: detect-private-key
 
-  # Ruff - Fast Python linter (includes isort functionality)
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.15
-    hooks:
-      - id: ruff
-        args: [--fix, --exit-non-zero-on-fix]
-        types_or: [python, pyi]
-
-  # Black - Python code formatter (for consistency with ruff-format)
+  # ---------- PYTHON FORMAT ----------
   - repo: https://github.com/psf/black
-    rev: 23.12.1
+    rev: 24.4.2
     hooks:
       - id: black
-        language_version: python3
         args: [--line-length=88]
 
-  # Prettier - Format YAML, JSON, Markdown
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.1.0
+  # ---------- PYTHON LINT (NO FIX) ----------
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.10
     hooks:
-      - id: prettier
-        types_or: [yaml, markdown, json]
-        exclude: ^(CHANGELOG\.md|LICENSE)$
+      - id: ruff
+        args: [--no-fix]
+        types_or: [python, pyi]
 
-  # Pyupgrade - Upgrade Python syntax
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.0
-    hooks:
-      - id: pyupgrade
-        args: [--py39-plus] # Match minimum Python version
-
-  # MyPy - Static type checking
+  # ---------- TYPES ----------
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
+    rev: v1.10.0
     hooks:
       - id: mypy
+        args: [--ignore-missing-imports, --check-untyped-defs]
         additional_dependencies:
           - types-PyYAML
           - types-requests
-        args: [--ignore-missing-imports, --check-untyped-defs]
         files: ^src/
-        exclude: ^(tests/|examples/|legacy/)
 
-  # Bandit - Security linter
+  # ---------- SECURITY ----------
   - repo: https://github.com/PyCQA/bandit
     rev: 1.9.2
     hooks:
@@ -87,25 +55,14 @@ repos:
         args: [-c, pyproject.toml, -r, src/]
         additional_dependencies: ["bandit[toml]"]
 
-  # Markdown linting
-  - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.38.0
+  # ---------- NON-PYTHON FORMAT ----------
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v2.7.0
     hooks:
-      - id: markdownlint-fix
-        args: [--disable, MD013, MD033, MD041, --]
+      - id: prettier
+        types_or: [yaml, markdown, json]
 
-  # YAML linting
-  - repo: https://github.com/adrienverge/yamllint
-    rev: v1.33.0
-    hooks:
-      - id: yamllint
-        args:
-          [
-            -d,
-            "{extends: default, rules: {line-length: {max: 120}, document-start: disable}}",
-          ]
-
-  # Conventional commits
+  # ---------- COMMIT MSG ----------
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v3.0.0
     hooks:

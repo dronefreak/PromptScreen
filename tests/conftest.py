@@ -1,4 +1,5 @@
 """Shared test fixtures for all tests."""
+
 import json
 import tempfile
 from collections.abc import Generator

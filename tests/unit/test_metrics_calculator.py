@@ -1,4 +1,5 @@
 """Tests for MetricsCalculator."""
+
 from datetime import datetime
 
 import pytest

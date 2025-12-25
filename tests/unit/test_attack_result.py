@@ -1,4 +1,5 @@
 """Tests for AttackResult dataclass."""
+
 from datetime import datetime
 
 from promptscreen.evaluation import AttackResult

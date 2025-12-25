@@ -1,4 +1,5 @@
 """Simple example: Use guards from new package structure."""
+
 import sys
 
 from promptscreen.defence import (

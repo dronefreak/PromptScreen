@@ -1,4 +1,5 @@
 """Integration tests for FastAPI endpoints."""
+
 import pytest
 from fastapi.testclient import TestClient
 from promptscreen.api import create_app
