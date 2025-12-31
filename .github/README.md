@@ -2,8 +2,8 @@
 
 **A prompt injection and jailbreak detection system for LLMs**
 
-[![🧪 Tests](https://img.shields.io/badge/GitHub-Tests-2088FF?logo=github&logoColor=white&style=for-the-badge)](https://github.com/cross-codes/Prompt-Injection-And-Jailbreaking/actions/workflows/tests.yml)
-[![📊 Codecov](https://img.shields.io/badge/Codecov-Coverage-FF4D00?logo=codecov&logoColor=white&style=for-the-badge)](https://codecov.io/gh/cross-codes/Prompt-Injection-And-Jailbreaking)
+[![🧪 Tests](https://img.shields.io/badge/GitHub-Tests-2088FF?logo=github&logoColor=white&style=for-the-badge)](https://github.com/dronefreak/PromptScreen/actions/workflows/tests.yml)
+[![📊 Codecov](https://img.shields.io/badge/Codecov-Coverage-FF4D00?logo=codecov&logoColor=white&style=for-the-badge)](https://codecov.io/gh/dronefreak/PromptScreen)
 [![⚖️ License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-green?logo=open-source-initiative&logoColor=white&style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
 [![🐍 Python 3.9+](https://img.shields.io/badge/Python-3.9+-3776AB?logo=python&logoColor=white&style=for-the-badge)](https://www.python.org/downloads/)
 
@@ -19,7 +19,7 @@ PromptScreen is an open-source library that provides multiple defense layers aga
 
 ```bash
 # Clone repository
-git clone https://github.com/cross-codes/Prompt-Injection-And-Jailbreaking
+git clone https://github.com/dronefreak/PromptScreen
 cd Prompt-Injection-And-Jailbreaking
 
 # Setup virtualenv

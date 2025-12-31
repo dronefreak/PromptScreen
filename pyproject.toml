@@ -85,7 +85,6 @@ dev = [
     "pytest-mock>=3.11.0",
     "black>=23.12.0",
     "ruff>=0.1.15",
-    "isort>=5.13.0",
     "mypy>=1.8.0",
     "bandit[toml]>=1.7.6",
     "pre-commit>=3.5.0",
@@ -103,10 +102,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/cross-codes/Prompt-Injection-And-Jailbreaking"
-Repository = "https://github.com/cross-codes/Prompt-Injection-And-Jailbreaking"
-Documentation = "https://github.com/cross-codes/Prompt-Injection-And-Jailbreaking#readme"
-Issues = "https://github.com/cross-codes/Prompt-Injection-And-Jailbreaking/issues"
+Homepage = "https://github.com/dronefreak/PromptScreen"
+Repository = "https://github.com/dronefreak/PromptScreen"
+Documentation = "https://github.com/dronefreak/PromptScreen#readme"
+Issues = "https://github.com/dronefreak/PromptScreen/issues"
 
 [build-system]
 requires = ["setuptools>=65.0", "wheel"]
