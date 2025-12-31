@@ -7,7 +7,16 @@ from .injection_regex import InjectionScanner
 from .linear_svm import JailbreakInferenceAPI
 from .ppa_defence import PolymorphicPromptAssembler
 from .scanner import Scanner
-from .vectordb import VectorDB, VectorDBScanner
+
+# Optional VectorDB guard (requires chromadb)
+try:
+    from .vectordb import VectorDB, VectorDBScanner
+
+    _has_vectordb = True
+except ImportError:
+    VectorDB = None  # type: ignore
+    VectorDBScanner = None  # type: ignore
+    _has_vectordb = False
 
 # Optional ML guards (require torch/transformers)
 try:
@@ -34,9 +43,9 @@ __all__ = [
     "Scanner",
     "InjectionScanner",
     "PolymorphicPromptAssembler",
+    # Optional - may be None if dependencies not installed
     "VectorDB",
     "VectorDBScanner",
-    # Optional - may be None if ML deps not installed
     "ClassifierCluster",
     "ShieldGemma2BClassifier",
 ]

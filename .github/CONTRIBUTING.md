@@ -7,7 +7,7 @@ Thanks for your interest in contributing! This document outlines how to set up y
 ### 1. Fork and Clone
 
 ```bash
-git clone https://github.com/cross-codes/Prompt-Injection-And-Jailbreaking.git
+git clone https://github.com/dronefreak/PromptScreen.git
 cd Prompt-Injection-And-Jailbreaking
 ```
 
@@ -209,8 +209,8 @@ def analyze_prompt(prompt: str, threshold: float = 0.5) -> AnalysisResult:
 
 ## Getting Help
 
-- **Questions?** Open a [GitHub Discussion](https://github.com/cross-codes/Prompt-Injection-And-Jailbreaking/discussions)
-- **Bug reports?** Open an [Issue](https://github.com/cross-codes/Prompt-Injection-And-Jailbreaking/issues)
+- **Questions?** Open a [GitHub Discussion](https://github.com/dronefreak/PromptScreen/discussions)
+- **Bug reports?** Open an [Issue](https://github.com/dronefreak/PromptScreen/issues)
 - **Security concerns?** See [SECURITY.md](SECURITY.md)
 
 ## Areas We Need Help
@@ -224,7 +224,7 @@ Current priorities:
 - [ ] Performance optimization for production use
 - [ ] Better documentation and examples
 
-Check the [Issues page](https://github.com/cross-codes/Prompt-Injection-And-Jailbreaking/issues) for specific tasks labeled `good-first-issue` or `help-wanted`.
+Check the [Issues page](https://github.com/dronefreak/PromptScreen/issues) for specific tasks labeled `good-first-issue` or `help-wanted`.
 
 ## License
 

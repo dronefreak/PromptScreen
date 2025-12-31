@@ -4,7 +4,7 @@ A comprehensive library for defending Large Language Models against
 prompt injection and jailbreak attacks.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 # Core defence classes (always available)
 from .defence import (

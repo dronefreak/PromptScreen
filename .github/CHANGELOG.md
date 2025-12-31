@@ -13,20 +13,25 @@ _No unreleased changes._
 
 ---
 
-## [0.2.0] - 2025-12-31
+## [0.2.0] - 2025-12-26
 
 ### Added
 
-- Initial public release of **PromptScreen** on PyPi
-- Updated SVM model with a better performance
-- Bumped typing_extensions version
+- **PyPI package publication** - `pip install promptscreen` now works!
+- Properly configured packaging for distribution
 
-### Notes
+### Fixed
 
-- This is an **alpha release**; APIs may change
-- ML-based guards have limited test coverage
+- typing-extensions dependency now installed on all Python versions (fixes Python 3.12 import error)
+- VectorDB and ML guards now properly optional (lazy imports)
+- chromadb import error when using core package only
 
----
+### Changed
+
+- First public release on PyPI (previously source-only)
+- Improved optional dependency handling
+
+## [0.2.0]: https://github.com/dronefreak/PromptScreen/releases/tag/v0.2.0
 
 ## [0.1.0] - 2025-12-25
 
