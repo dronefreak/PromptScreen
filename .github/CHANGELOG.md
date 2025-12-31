@@ -13,6 +13,21 @@ _No unreleased changes._
 
 ---
 
+## [0.2.0] - 2025-12-31
+
+### Added
+
+- Initial public release of **PromptScreen** on PyPi
+- Updated SVM model with a better performance
+- Bumped typing_extensions version
+
+### Notes
+
+- This is an **alpha release**; APIs may change
+- ML-based guards have limited test coverage
+
+---
+
 ## [0.1.0] - 2025-12-25
 
 ### Added
