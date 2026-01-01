@@ -25,6 +25,7 @@ _No unreleased changes._
 
 - Added tests/ to CI
 - Re-ordered imports to fix ruff errors
+- Bumped conflicting versions of ruff linter
 
 ## [0.3.0]: https://github.com/dronefreak/PromptScreen/releases/tag/v0.3.0
 

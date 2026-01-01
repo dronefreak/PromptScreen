@@ -33,7 +33,7 @@ repos:
     rev: v0.14.10
     hooks:
       - id: ruff
-        args: [--no-fix]
+        args: [--fix]
         types_or: [python, pyi]
 
   # ---------- TYPES ----------
