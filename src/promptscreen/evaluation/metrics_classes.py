@@ -191,17 +191,17 @@ class MetricsCalculator:
 Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
 
 ATTACK SUCCESS RATE METRICS:
-- Overall ASR: {asr_metrics.get('overall_asr', 0):.2%}
-- Successful Attacks: {asr_metrics.get('successful_attacks', 0)}/{asr_metrics.get('total_attempts', 0)}
+- Overall ASR: {asr_metrics.get("overall_asr", 0):.2%}
+- Successful Attacks: {asr_metrics.get("successful_attacks", 0)}/{asr_metrics.get("total_attempts", 0)}
 """
 
         if "error" not in time_metrics:
             report += f"""
 TIME-TO-CLASSIFY METRICS:
-- Average Time: {time_metrics['average_time_to_classify']:.2f} seconds
-- Median Time: {time_metrics['median_time_to_classify']:.2f} seconds
-- Range: {time_metrics['min_time']:.2f} - {time_metrics['max_time']:.2f} seconds
-- Standard Deviation: {time_metrics['std_deviation']:.2f} seconds
+- Average Time: {time_metrics["average_time_to_classify"]:.2f} seconds
+- Median Time: {time_metrics["median_time_to_classify"]:.2f} seconds
+- Range: {time_metrics["min_time"]:.2f} - {time_metrics["max_time"]:.2f} seconds
+- Standard Deviation: {time_metrics["std_deviation"]:.2f} seconds
 """
         return report
 

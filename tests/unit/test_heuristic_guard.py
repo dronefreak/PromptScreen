@@ -7,6 +7,7 @@ Known limitations (to be addressed in future):
 """
 
 import pytest
+
 from promptscreen.defence import HeuristicVectorAnalyzer
 
 

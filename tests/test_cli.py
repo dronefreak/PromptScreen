@@ -3,6 +3,7 @@
 import json
 
 from click.testing import CliRunner
+
 from promptscreen.cli import cli
 
 
