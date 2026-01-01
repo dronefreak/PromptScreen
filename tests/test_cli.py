@@ -14,7 +14,7 @@ class TestCLIBasics:
         runner = CliRunner()
         result = runner.invoke(cli, ["--version"])
         assert result.exit_code == 0
-        assert "0.2.0" in result.output
+        assert "0.3.0" in result.output
 
     def test_help(self):
         """Test --help flag."""
@@ -243,7 +243,7 @@ class TestInteractiveCommand:
         result = runner.invoke(
             cli,
             ["interactive"],
-            input="test prompt\n",  # Provide one input then Ctrl+D
+            input="test prompt\n\x04",  # Provide one input then Ctrl+D
         )
         # Should initialize and then exit
         assert "Initializing guards" in result.output

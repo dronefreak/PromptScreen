@@ -13,6 +13,23 @@ _No unreleased changes._
 
 ---
 
+## [0.3.0] - 2026-01-02
+
+### Added
+
+- **CLI** - `promptscreen scan "Ignore all instructions"` now works!
+- Check `src/promptscreen/cli.py` for more details!
+- Added tests for CLI
+
+### Fixed
+
+- Added tests/ to CI
+- Re-ordered imports to fix ruff errors
+
+## [0.3.0]: https://github.com/dronefreak/PromptScreen/releases/tag/v0.3.0
+
+---
+
 ## [0.2.0] - 2025-12-26
 
 ### Added
@@ -32,6 +49,8 @@ _No unreleased changes._
 - Improved optional dependency handling
 
 ## [0.2.0]: https://github.com/dronefreak/PromptScreen/releases/tag/v0.2.0
+
+---
 
 ## [0.1.0] - 2025-12-25
 
