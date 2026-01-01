@@ -4,10 +4,9 @@ This evaluates guards against a labeled dataset and calculates
 precision, recall, specificity, and accuracy.
 """
 
-import sys
-
 import hydra
 from omegaconf import DictConfig
+
 from promptscreen.defence import (
     ClassifierCluster,
     HeuristicVectorAnalyzer,
@@ -18,8 +17,6 @@ from promptscreen.defence import (
     VectorDBScanner,
 )
 from promptscreen.evaluation import run_suite
-
-sys.path.insert(0, "src")
 
 
 def initialize_guards(cfg: DictConfig) -> dict:

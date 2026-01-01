@@ -3,11 +3,10 @@
 This starts an API server that allows testing guards via HTTP requests.
 """
 
-import sys
-
 import hydra
 import uvicorn
 from omegaconf import DictConfig
+
 from promptscreen.api import create_app
 from promptscreen.defence import (
     ClassifierCluster,
@@ -18,8 +17,6 @@ from promptscreen.defence import (
     VectorDB,
     VectorDBScanner,
 )
-
-sys.path.insert(0, "src")
 
 
 def initialize_all_guards(cfg: DictConfig) -> dict:

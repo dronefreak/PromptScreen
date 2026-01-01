@@ -3,6 +3,7 @@
 from pathlib import Path
 
 import pytest
+
 from promptscreen.defence import JailbreakInferenceAPI
 
 
@@ -26,16 +27,14 @@ class TestJailbreakInferenceAPI:
         with pytest.raises(FileNotFoundError):
             JailbreakInferenceAPI("nonexistent_dir")
 
-    ## Uncoment the following test once reliable
-    ## SVM pre-trained models are available
-
-    # def test_allows_benign_prompts(self, guard, sample_benign_prompts):
-    #     """Test that benign prompts are allowed."""
-    #     for prompt in sample_benign_prompts:
-    #         result = guard.analyse(prompt)
-    #         # SVM should allow benign prompts
-    #         # Note: This might fail if model is poorly trained
-    #         assert result.get_verdict() is True, f"Should allow: {prompt}"
+    def test_allows_benign_prompts(self, guard, sample_benign_prompts):
+        """Test that benign prompts are allowed."""
+        for prompt in sample_benign_prompts:
+            result = guard.analyse(prompt)
+            # SVM should allow benign prompts
+            # Note: This might fail if model is poorly trained
+            print(f"Testing benign prompt: {prompt} => Verdict: {result.get_verdict()}")
+            assert result.get_verdict() is True, f"Should allow: {prompt}"
 
     def test_blocks_obvious_jailbreaks(self, guard):
         """Test blocking of obvious jailbreak attempts."""
@@ -54,6 +53,7 @@ class TestJailbreakInferenceAPI:
         result_type = result.get_type()
         assert "SVM" in result_type or "classifier" in result_type.lower()
 
+    # TODO: Re-enable after improving model training
     # def test_empty_prompt(self, guard):
     #     """Test handling of empty prompt."""
     #     result = guard.analyse("")

@@ -4,10 +4,9 @@ This evaluates end-to-end attack success by running prompts through guards,
 sending to LLM, and judging if attack succeeded.
 """
 
-import sys
-
 import hydra
 from omegaconf import DictConfig
+
 from promptscreen.defence import (
     ClassifierCluster,
     HeuristicVectorAnalyzer,
@@ -18,8 +17,6 @@ from promptscreen.defence import (
     VectorDBScanner,
 )
 from promptscreen.evaluation import evaluate
-
-sys.path.insert(0, "src")
 
 
 def initialize_guards(cfg: DictConfig) -> dict:

@@ -1,14 +1,10 @@
 """Simple example: Use guards from new package structure."""
 
-import sys
-
 from promptscreen.defence import (
     HeuristicVectorAnalyzer,
     InjectionScanner,
     Scanner,
 )
-
-sys.path.insert(0, "src")
 
 
 def test_prompt(guards, prompt):

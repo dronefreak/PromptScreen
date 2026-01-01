@@ -1,6 +1,7 @@
 """Tests for QueryAgent utility."""
 
 import pytest
+
 from promptscreen.utils import QueryAgent
 
 

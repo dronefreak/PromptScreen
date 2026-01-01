@@ -1,6 +1,6 @@
 [project]
 name = "promptscreen"
-version = "0.2.0"
+version = "0.3.0"
 description = "Prompt injection defense for LLMs"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -84,7 +84,7 @@ dev = [
     "pytest-asyncio>=0.21.0",
     "pytest-mock>=3.11.0",
     "black>=23.12.0",
-    "ruff>=0.1.15",
+    "ruff>=0.14.5",
     "mypy>=1.8.0",
     "bandit[toml]>=1.7.6",
     "pre-commit>=3.5.0",
@@ -106,6 +106,9 @@ Homepage = "https://github.com/dronefreak/PromptScreen"
 Repository = "https://github.com/dronefreak/PromptScreen"
 Documentation = "https://github.com/dronefreak/PromptScreen#readme"
 Issues = "https://github.com/dronefreak/PromptScreen/issues"
+
+[project.scripts]
+promptscreen = "promptscreen.cli:cli"
 
 [build-system]
 requires = ["setuptools>=65.0", "wheel"]

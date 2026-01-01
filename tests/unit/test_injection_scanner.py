@@ -1,6 +1,7 @@
 """Tests for InjectionScanner guard."""
 
 import pytest
+
 from promptscreen.defence import InjectionScanner
 
 

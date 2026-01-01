@@ -2,9 +2,9 @@ name: Tests
 
 on:
   push:
-    branches: [main, develop, refactor/v1]
+    branches: [master, dev, "feature/*", cli/*', test/*']
   pull_request:
-    branches: [main, develop]
+    branches: [master, dev]
 
 jobs:
   test:
@@ -36,19 +36,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
-      - name: Lint with ruff
-        run: ruff check src/
+      - name: Lint check with ruff
+        run: ruff check src/ tests/
 
-      - name: Check code formatting
+      - name: Format check with black
         run: |
-          black --check src/
+          black --check src/ tests/
 
       - name: Type check with mypy
         run: mypy src/
         continue-on-error: true
 
       - name: Security check with bandit
-        run: bandit -c pyproject.toml -r src/
+        run: bandit -c pyproject.toml -r src/ tests/
         continue-on-error: true
 
       - name: Test with pytest

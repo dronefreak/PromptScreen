@@ -54,7 +54,6 @@ pre-commit run --all-files
 ```
 
 2. **Write code**
-
    - Follow existing code style (pre-commit hooks will enforce this)
    - Add type hints to all functions
    - Keep functions focused and testable
@@ -70,7 +69,6 @@ pre-commit run --all-files
 ```
 
 4. **Update documentation**
-
    - Add docstrings to new functions/classes
    - Update README if you add new features
    - Add examples if relevant
@@ -109,14 +107,12 @@ chore: update dependencies
 ```
 
 2. **Open a Pull Request**
-
    - Use a clear, descriptive title
    - Reference related issues (`Fixes #123`)
    - Describe what changed and why
    - Include test results if relevant
 
 3. **Address review feedback**
-
    - Be open to suggestions
    - Ask questions if unclear
    - Update your PR based on feedback
