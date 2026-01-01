@@ -107,6 +107,9 @@ Repository = "https://github.com/dronefreak/PromptScreen"
 Documentation = "https://github.com/dronefreak/PromptScreen#readme"
 Issues = "https://github.com/dronefreak/PromptScreen/issues"
 
+[project.scripts]
+promptscreen = "promptscreen.cli:cli"
+
 [build-system]
 requires = ["setuptools>=65.0", "wheel"]
 build-backend = "setuptools.build_meta"

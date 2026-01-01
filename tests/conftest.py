@@ -16,7 +16,7 @@ def sample_benign_prompts() -> list[str]:
         "Tell me about machine learning",
         "How do I cook pasta?",
         "What time is it?",
-        "Explain quantum physics",
+        "Explain the theory of relativity.",
     ]
 
 
