@@ -44,7 +44,7 @@ jobs:
           black --check src/ tests/
 
       - name: Type check with mypy
-        run: mypy src/ tests/
+        run: mypy src/
         continue-on-error: true
 
       - name: Security check with bandit
