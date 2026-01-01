@@ -1,6 +1,7 @@
 """Tests for CLI commands."""
 
 import json
+from unittest.mock import patch
 
 from click.testing import CliRunner
 
@@ -238,15 +239,10 @@ class TestInteractiveCommand:
         assert result.exit_code == 0
         assert "Interactive" in result.output
 
-    def test_interactive_with_input(self):
-        """Test interactive mode with input."""
+    def test_interactive_with_input():
         runner = CliRunner()
-        result = runner.invoke(
-            cli,
-            ["interactive"],
-            input="test prompt\n\x04",  # Provide one input then Ctrl+D
-        )
-        # Should initialize and then exit
+        with patch("builtins.input", side_effect=["test prompt"]):
+            result = runner.invoke(cli, ["interactive"])
         assert "Initializing guards" in result.output
 
 
