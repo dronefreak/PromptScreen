@@ -7,6 +7,7 @@ from omegaconf import DictConfig, OmegaConf
 from defence.abstract_defence import AbstractDefence
 from defence.train.train_classifier import JailbreakClassifier
 
+
 def calculate_and_write_metrics(
     data: list[dict[str, Any]],
     guard: AbstractDefence,
@@ -41,6 +42,7 @@ def calculate_and_write_metrics(
     _ = output_file.write(f"Negative Predictive Value: {npv:.4f}\n")
     _ = output_file.write(f"Accuracy: {accuracy:.4f}\n\n")
 
+
 def run_suite(cfg: DictConfig, guards: dict) -> None:
     if "shieldgemma" in cfg.active_defences and not cfg.huggingface_token:
         raise ValueError(
@@ -50,17 +52,22 @@ def run_suite(cfg: DictConfig, guards: dict) -> None:
 
     with open(cfg.input_file, "r") as fh_in:
         data_to_process: list[dict] = json.load(fh_in)
-
+        
     output_file = cfg.output_file
     if "svm" in cfg.active_defences:
         variant = cfg.get('variant', 'word_ngram_1_2')
         output_path = Path(output_file)
+        # Ensure results directory exists
+        output_path.parent.mkdir(parents=True, exist_ok=True)
         output_file = str(output_path.parent / f"{output_path.stem}_{variant}{output_path.suffix}")
+        print(f"Saving results to: {output_file}")
     
+    # Clear the file
     open(output_file, "w").close()
-
+ 
     for label, guard_instance in guards.items():
-        with open(cfg.output_file, "a") as fh_out:
+        with open(output_file, "a") as fh_out:   
             calculate_and_write_metrics(data_to_process, guard_instance, label, fh_out)
 
-    print(f"\nResults stored in '{cfg.output_file}'")
+     
+    print(f"\nResults stored in '{output_file}'")   
