@@ -1,0 +1,7 @@
+--- svm Metrics ---
+Precision: 0.8736
+Sensitivity (Recall): 0.9285
+Specificity: 0.9339
+Negative Predictive Value: 0.9637
+Accuracy: 0.9321
+
