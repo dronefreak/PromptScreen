@@ -1,12 +1,14 @@
 mode: pipeline
 
-input_file: "offence/balanced_test_50_perturbed.json"
+input_file: "svm_ablation_study/metrics_test.json"
 output_file: "results/results.txt"
 model_dir: "model_artifacts"
 threat_file: "offence/malignant.json"
 
 train: true
-train_file: "offence/metrics_train_set.json"
+train_file: "svm_ablation_study/metrics_train.json"
+
+variant: word_ngram_1_2
 
 vectordb:
   model: "all-MiniLM-L6-v2"

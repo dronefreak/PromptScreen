@@ -7,7 +7,10 @@ from transformers import (
 import torch
 from torch.nn.functional import softmax
 
-from typing import override
+try:
+    from typing import override
+except ImportError:
+    from typing_extensions import override
 from defence.abstract_defence import AbstractDefence
 from defence.ds.analysis_result import AnalysisResult
 

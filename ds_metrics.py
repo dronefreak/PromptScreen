@@ -51,7 +51,13 @@ def run_suite(cfg: DictConfig, guards: dict) -> None:
     with open(cfg.input_file, "r") as fh_in:
         data_to_process: list[dict] = json.load(fh_in)
 
-    open(cfg.output_file, "w").close()
+    output_file = cfg.output_file
+    if "svm" in cfg.active_defences:
+        variant = cfg.get('variant', 'word_ngram_1_2')
+        output_path = Path(output_file)
+        output_file = str(output_path.parent / f"{output_path.stem}_{variant}{output_path.suffix}")
+    
+    open(output_file, "w").close()
 
     for label, guard_instance in guards.items():
         with open(cfg.output_file, "a") as fh_out:

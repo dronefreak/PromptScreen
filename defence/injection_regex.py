@@ -5,7 +5,10 @@ import unicodedata
 
 from defence.abstract_defence import AbstractDefence
 from collections.abc import Iterator
-from typing import override
+try:
+    from typing import override
+except ImportError:
+    from typing_extensions import override
 from defence.ds.analysis_result import AnalysisResult
 
 SENSITIVE_FILES = (

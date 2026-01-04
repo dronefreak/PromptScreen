@@ -1,7 +1,10 @@
 # https://arxiv.org/pdf/2506.06384
 # Potential false positives, uncertain on how to correct
 import re
-from typing import override
+try:
+    from typing import override
+except ImportError:
+    from typing_extensions import override
 from defence.abstract_defence import AbstractDefence
 from defence.ds.analysis_result import AnalysisResult
 

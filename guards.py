@@ -39,18 +39,23 @@ def initialize_guards(cfg: DictConfig) -> dict[str, AbstractDefence]:
             print(f"Warning: Could not populate VectorDB. Error: {e}")
 
     if "svm" in cfg.active_defences:
+        variant = cfg.get('variant', 'word_ngram_1_2')
         model_dir_path = Path(cfg.model_dir)
-        model_files_exist = any(model_dir_path.glob("*.joblib"))
+        variant_model_exists = (model_dir_path / f"linear_svm_model_{variant}.joblib").exists()
+        variant_features_exist = (model_dir_path / f"feature_union_{variant}.joblib").exists()
+        model_files_exist = variant_model_exists and variant_features_exist
         should_train = cfg.train or not model_files_exist
 
         if should_train:
             if not model_files_exist:
-                print("Model artifacts (*.joblib) not found. Forcing training...")
+                print(f"Model artifacts for variant '{variant}' not found. Forcing training...")
             else:
-                print("Starting training as requested by 'train=true' configuration.")
+                print(f"Starting training for variant '{variant}' as requested by 'train=true' configuration.")            
             try:
                 trainer = JailbreakClassifier(
-                    json_file_path=cfg.train_file, model_output_dir=cfg.model_dir
+                    json_file_path=cfg.train_file, 
+                    model_output_dir=cfg.model_dir,
+                    variant=variant  # Pass variant parameter
                 )
                 trainer.train()
                 print("\nTraining finished successfully.")
@@ -59,14 +64,14 @@ def initialize_guards(cfg: DictConfig) -> dict[str, AbstractDefence]:
             except Exception as e:
                 print(f"An error occurred during training: {e}")
         else:
-            print(f"Skipping training: Model artifacts already exist in '{cfg.model_dir}' and 'train=false'.")
+             print(f"Skipping training: Model artifacts for variant '{variant}' already exist in '{cfg.model_dir}' and 'train=false'.")
 
         print("-" * 20)
 
 
     guard_list = {
         "heuristic": lambda: HeuristicVectorAnalyzer(3, 3),
-        "svm": lambda: JailbreakInferenceAPI(cfg.model_dir),
+        "svm": lambda: JailbreakInferenceAPI(cfg.model_dir, variant=variant),
         "cluster": lambda: ClassifierCluster(),
         "shieldgemma": lambda: ShieldGemma2BClassifier(cfg.huggingface_token),
         "vectordb": lambda: VectorDBScanner(db_client, cfg.vectordb.threshold),
@@ -81,7 +86,10 @@ def initialize_guards(cfg: DictConfig) -> dict[str, AbstractDefence]:
                 continue
 
             initialized_guards[name] = guard_list[name]()
-            print(f"- Guard '{name}' initialized.")
+            if name == "svm":
+                print(f"- Guard '{name}' initialized with variant '{variant}'.")
+            else:
+                print(f"- Guard '{name}' initialized.")
         else:
             print(f"Warning: Guard '{name}' not recognized.")
 
@@ -111,33 +119,40 @@ def initialize_all_guards(cfg: DictConfig) -> dict[str, AbstractDefence]:
     except Exception as e:
         print(f"Warning: Could not populate VectorDB. Error: {e}")
 
+    variant = cfg.get('variant', 'word_ngram_1_2')
+
     model_dir_path = Path(cfg.model_dir)
-    model_files_exist = any(model_dir_path.glob("*.joblib"))
+
+    variant_model_exists = (model_dir_path / f"linear_svm_model_{variant}.joblib").exists()
+    variant_features_exist = (model_dir_path / f"feature_union_{variant}.joblib").exists()
+    model_files_exist = variant_model_exists and variant_features_exist
     should_train = cfg.train or not model_files_exist
 
     if should_train:
         if not model_files_exist:
-            print("Model artifacts (*.joblib) not found. Forcing training...")
+            print(f"Model artifacts for variant '{variant}' not found. Forcing training...")
         else:
-            print("Starting training as requested by 'train=true' configuration.")
-        try:
+            print(f"Starting training for variant '{variant}' as requested by 'train=true' configuration.")
+        
+        try: 
             trainer = JailbreakClassifier(
-                json_file_path=cfg.train_file, model_output_dir=cfg.model_dir
+                json_file_path=cfg.train_file, 
+                model_output_dir=cfg.model_dir,
+                variant=variant
             )
             trainer.train()
-            print("\nTraining finished successfully.")
+            print(f"\nTraining finished successfully for variant '{variant}'.")
         except FileNotFoundError:
             print(f"Error: Training file '{cfg.train_file}' not found.")
         except Exception as e:
             print(f"An error occurred during training: {e}")
     else:
-        print(f"Skipping training: Model artifacts already exist in '{cfg.model_dir}' and 'train=false'.")
-
+        print(f"Skipping training: Model artifacts for variant '{variant}' already exist in '{cfg.model_dir}' and 'train=false'.")
     print("-" * 20)
 
     guard_list = {
         "heuristic": lambda: HeuristicVectorAnalyzer(3, 3),
-        "svm": lambda: JailbreakInferenceAPI(cfg.model_dir),
+        "svm": lambda: JailbreakInferenceAPI(cfg.model_dir, variant=variant),
         "cluster": lambda: ClassifierCluster(),
         "shieldgemma": lambda: ShieldGemma2BClassifier(cfg.huggingface_token),
         "vectordb": lambda: VectorDBScanner(db_client, cfg.vectordb.threshold),
@@ -147,4 +162,5 @@ def initialize_all_guards(cfg: DictConfig) -> dict[str, AbstractDefence]:
     initialized_guards = {name: constructor() for name, constructor in guard_list.items()}
 
     print(f"- All guards initialized: {list(initialized_guards.keys())}")
+    print(f"- SVM using variant: {variant}")
     return initialized_guards

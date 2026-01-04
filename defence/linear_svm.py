@@ -7,7 +7,10 @@ from nltk.stem import WordNetLemmatizer
 from nltk import pos_tag, word_tokenize
 import numpy as np
 
-from typing import override
+try:
+    from typing import override
+except ImportError:
+    from typing_extensions import override
 from defence.abstract_defence import AbstractDefence
 from defence.ds.analysis_result import AnalysisResult
 
@@ -69,20 +72,24 @@ def length_complexity_features(texts):
 
 
 class JailbreakInferenceAPI(AbstractDefence):
-    def __init__(self, model_dir: str):
-        model_path = Path(model_dir) / 'linear_svm_model.joblib'
-        feature_union_path = Path(model_dir) / 'feature_union.joblib'
+    def __init__(self, model_dir: str, variant: str = "word_ngram_1_2"):
+        model_path = Path(model_dir) / f'linear_svm_model_{variant}.joblib'
+        feature_union_path = Path(model_dir) / f'feature_union_{variant}.joblib'
 
         if not model_path.exists() or not feature_union_path.exists():
-            raise FileNotFoundError(f"Model or feature_union not found in '{model_dir}'. Please run the enhanced training script first.")
-
+            raise FileNotFoundError(
+                f"Model variant '{variant}' not found in '{model_dir}'. "
+                f"Please train this variant first using: "
+                f"python main.py mode=stats active_defences=[svm] train=true variant={variant}"
+            )
         self.model = joblib.load(model_path)
         self.feature_union = joblib.load(feature_union_path)
         self.preprocessor = TextPreProcessor()
+        self.variant = variant
 
     @override
     def analyse(self, query: str) -> AnalysisResult:
         clean_prompt = self.preprocessor.preprocess(query)
         features = self.feature_union.transform([clean_prompt])
         prediction = self.model.predict(features)
-        return AnalysisResult("Semantic SVM classifier", prediction[0] != 'jailbreak')
+        return AnalysisResult(f"SVM-{self.variant}", prediction[0] != 'jailbreak')

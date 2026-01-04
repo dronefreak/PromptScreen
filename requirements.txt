@@ -16,3 +16,4 @@ uvicorn==0.38.0
 emoji
 yara-python
 sentence_transformers
+typing_extensions
