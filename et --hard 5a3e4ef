@@ -1,0 +1,69 @@
+[33ma4a36e6[m First commit
+[33mcd0f0c3[m[33m ([m[1;31morigin/dev[m[33m)[m Add dummy file
+[33m7f74046[m Add classifier cluster defence
+[33m6fa28e2[m Push sample code
+[33ma3efeb2[m Add files via upload
+[33m908f3ff[m Add files via upload
+[33m5b91556[m Add files via upload
+[33me4b246e[m Merge metrics and main impl
+[33mf5b50af[m Push new defence strategy implementation
+[33m17d14bb[m Add files via upload
+[33m565c366[m Added test suite
+[33mbb6c817[m Update requirements
+[33ma80adcf[m Add temporary llm guard
+[33m5d13ae6[m Add files via upload
+[33m9e6f5de[m Create offence
+[33maf73933[m Delete offence
+[33m8748750[m Create test.py
+[33m27da6c6[m Rename prompts.json to offence/prompts.json
+[33m3729f8e[m Delete offence/test.py
+[33m1c87440[m Update and rename advllm_prompts.json to offence/advllm_prompts.json
+[33m6d5a63d[m Add files via upload
+[33m6c298e1[m Add files via upload
+[33m2e8d9fe[m Merge pull request #2 from cross-codes/Testady21-patch-metrics
+[33m4fc4680[m Switch to Ollama models to evade rate limits
+[33mea9527e[m Add a counter to keep track
+[33mb86a4e1[m Update requirements.txt
+[33m2cc4cc5[m New changes
+[33mff941ff[m Fix requirements
+[33m253ed9d[m Push results
+[33m86790bd[m Emoji resukts
+[33m51e035b[m Push all results
+[33m36bcd9b[m Reorder safety checks for prompt validation
+[33m9852e4b[m Add files via upload
+[33m9495fdd[m Add new metrics code
+[33m68bbd96[m Update requirements.txt
+[33mcc1bbf6[m Add new SVM defence, include hydra configuration for model testing
+[33mda11d45[m Minor changes
+[33mdc248c8[m 22626 prompts, both jailbreak and benign
+[33mb2f89ae[m Use train-validation-test split
+[33m14cff6a[m Update artifacts
+[33meb1a53d[m Update to use an API
+[33me0412a4[m Add new stuff
+[33m719f161[m Add files via upload
+[33ma74b3c6[m Delete metrics_classes.py
+[33m98cc3f6[m Update and rename metrics_updated.py to metrics_classes.py
+[33mafc547b[m Add files via upload
+[33m1cae5c4[m Add files via upload
+[33m41c18cc[m Update and rename offence/prompt-injection.json to offence/prompt-injection/prompt-injection.json
+[33mf1c219a[m Add files via upload
+[33m2bcfb10[m Delete offence/combined_classified_prompts.json
+[33m9df109c[m Update datasets
+[33m4057b87[m Update pipelije
+[33m8cb9928[m Update requirements
+[33ma358d6b[m Update requirements
+[33mbf22e86[m Update requirements
+[33mde626b7[m Refactor AttackEvaluator to use QueryAgent
+[33m4bf1e37[m Refactor AttackResult and AttackEvaluator classes
+[33m3f9dfb9[m Add files via upload
+[33m128d052[m Update agent info
+[33ma8aa1d8[m Update config.yaml
+[33m196d4de[m Updates
+[33mb8febb3[m Updated metrics
+[33mabb8b27[m Update metrics to calcualte average time
+[33md773989[m Update requirments
+[33m8e58419[m Update metrics
+[33m5a3e4ef[m[33m ([m[1;31morigin/legacy[m[33m, [m[1;32mlegacy[m[33m)[m Update SVM to match length vectors
+[33m038f238[m added SVM variants and perturbed dataset for Ablation study
+[33md7e9a44[m Track SVM ablation JSON artifacts with Git LFS
+[33m6030782[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32msvm-ablation-study[m[33m)[m Move large SVM ablation artifacts to Git LFS
